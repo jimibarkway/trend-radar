@@ -1,26 +1,82 @@
 @import "tailwindcss";
 
+/* Trend Radar - Option A design tokens (Linear core + radar-green accent + Raycast saturated source-icon palette).
+   Locked 2026-05-13 per docs/design-tokens.md. */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --canvas: #010102;
+  --surface-1: #0f1011;
+  --surface-2: #141516;
+  --surface-3: #18191a;
+  --surface-4: #191a1b;
+
+  --ink: #f7f8f8;
+  --ink-muted: #d0d6e0;
+  --ink-subtle: #8a8f98;
+  --ink-tertiary: #62666d;
+
+  --hairline: #23252a;
+  --hairline-strong: #34343a;
+
+  --accent: #59d499;
+  --accent-soft: rgba(89, 212, 153, 0.15);
+
+  --rising: #ffc533;
+  --alert: #ff6161;
+  --success: #27a644;
+
+  --src-github: #59d499;
+  --src-reddit: #ff801f;
+  --src-youtube: #ff2047;
+  --src-x: #3b9eff;
+  --src-rss: #ffc533;
+  --src-search: #a855f7;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-canvas: var(--canvas);
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-surface-4: var(--surface-4);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-subtle: var(--ink-subtle);
+  --color-ink-tertiary: var(--ink-tertiary);
+  --color-hairline: var(--hairline);
+  --color-hairline-strong: var(--hairline-strong);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-rising: var(--rising);
+  --color-alert: var(--alert);
+  --color-success: var(--success);
+  --color-src-github: var(--src-github);
+  --color-src-reddit: var(--src-reddit);
+  --color-src-youtube: var(--src-youtube);
+  --color-src-x: var(--src-x);
+  --color-src-rss: var(--src-rss);
+  --color-src-search: var(--src-search);
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), "JetBrains Mono", monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html, body {
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-}
+/* Typography presets (locked in docs/design-tokens.md). */
+.t-display-xl  { font-size: 80px; font-weight: 600; line-height: 1.0;  letter-spacing: -3px; }
+.t-display-lg  { font-size: 56px; font-weight: 600; line-height: 1.1;  letter-spacing: -1.8px; }
+.t-display-md  { font-size: 40px; font-weight: 600; line-height: 1.15; letter-spacing: -1px; }
+.t-headline    { font-size: 28px; font-weight: 600; line-height: 1.2;  letter-spacing: -0.5px; }
+.t-body-lead   { font-size: 17px; font-weight: 400; line-height: 1.6; }
+.t-body        { font-size: 16px; font-weight: 400; line-height: 1.6; }
+.t-supporting  { font-size: 14px; font-weight: 400; line-height: 1.6; color: var(--ink-subtle); }
+.t-micro-label { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-tertiary); }
+.t-mono        { font-family: var(--font-geist-mono), "JetBrains Mono", monospace; font-size: 12px; }
+
+::selection { background: var(--accent-soft); color: var(--ink); }
