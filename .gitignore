@@ -15,3 +15,4 @@ node_modules/
 .dry-run-state.json
 .vercel
 .env*.local
+/logs/
