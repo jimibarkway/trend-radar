@@ -62,14 +62,33 @@ def load_dotenv(path: Path | None = None) -> None:
         os.environ.setdefault(k, v)
 
 
-def require_env(key: str) -> str:
+# Some env-var names are commonly aliased - accept either spelling.
+_ALIASES: dict[str, list[str]] = {
+    "GOOGLE_API_KEY": ["GEMINI_API_KEY"],
+    "GEMINI_API_KEY": ["GOOGLE_API_KEY"],
+    "GITHUB_TOKEN": ["GITHUB_PAT"],
+    "APIFY_TOKEN": ["APIFY_API_TOKEN"],
+}
+
+
+def _resolve(key: str) -> str | None:
     load_dotenv()
-    val = os.environ.get(key)
+    if os.environ.get(key):
+        return os.environ[key]
+    for alt in _ALIASES.get(key, []):
+        if os.environ.get(alt):
+            return os.environ[alt]
+    return None
+
+
+def require_env(key: str) -> str:
+    val = _resolve(key)
     if not val:
-        sys.exit(f"Missing env var: {key}. Set it in .env or your shell.")
+        aliases = _ALIASES.get(key, [])
+        names = ", ".join([key] + aliases)
+        sys.exit(f"Missing env var. Set one of: {names}")
     return val
 
 
 def optional_env(key: str, default: str | None = None) -> str | None:
-    load_dotenv()
-    return os.environ.get(key, default)
+    return _resolve(key) or default
