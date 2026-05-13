@@ -211,33 +211,33 @@ function FeedCard({ event }: { event: RawEvent }) {
         borderLeft: `3px solid ${col}`,
       }}
     >
-      <div className="flex gap-5 p-5">
+      <div className="flex gap-5 md:gap-6 p-5 md:p-6">
         <SourcePreview event={event} />
-        <div className="min-w-0 flex-1 flex flex-col justify-between">
+        <div className="min-w-0 flex-1 flex flex-col justify-between gap-4">
           {/* Meta row */}
           <div>
             <div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1">
               <span
-                className="t-micro-label inline-flex items-center gap-1.5 rounded px-2 py-0.5"
+                className="t-micro-label inline-flex items-center gap-1.5 rounded px-2.5 py-1"
                 style={{
                   background: col + "22",
                   color: col,
                   border: `1px solid ${col}44`,
                 }}
               >
-                <SourceIcon source={event.source} size={10} />
+                <SourceIcon source={event.source} size={11} />
                 {sourceLabel(event.source)}
               </span>
               <span
                 className="t-supporting"
-                style={{ color: "var(--ink-tertiary)", fontSize: "12px" }}
+                style={{ color: "var(--ink-tertiary)", fontSize: "13px" }}
               >
                 {relativeTime(event.published_at)}
               </span>
               {showAuthor && (
                 <span
-                  className="t-supporting truncate max-w-[220px]"
-                  style={{ color: "var(--ink-tertiary)", fontSize: "12px" }}
+                  className="t-supporting truncate max-w-[240px]"
+                  style={{ color: "var(--ink-tertiary)", fontSize: "13px" }}
                 >
                   {event.author}
                 </span>
@@ -247,19 +247,19 @@ function FeedCard({ event }: { event: RawEvent }) {
               className="line-clamp-2"
               style={{
                 color: "var(--ink)",
-                fontSize: "17px",
+                fontSize: "19px",
                 fontWeight: 500,
-                lineHeight: 1.35,
-                letterSpacing: "-0.01em",
+                lineHeight: 1.32,
+                letterSpacing: "-0.012em",
               }}
             >
               {event.title}
             </h3>
           </div>
           {/* Score row */}
-          <div className="mt-4 flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-wrap">
             <div
-              className="h-1 flex-1 max-w-[200px] rounded-full overflow-hidden"
+              className="h-1.5 flex-1 min-w-[120px] max-w-[220px] rounded-full overflow-hidden"
               style={{ background: "var(--surface-3)" }}
             >
               <div
@@ -272,13 +272,13 @@ function FeedCard({ event }: { event: RawEvent }) {
             </div>
             <span
               className="t-mono"
-              style={{ color: scoreColour, fontSize: "13px", fontWeight: 600 }}
+              style={{ color: scoreColour, fontSize: "14px", fontWeight: 600 }}
             >
               {formatScore(event.composite_score)}
             </span>
             <span
               className="t-supporting hidden sm:inline"
-              style={{ color: "var(--ink-tertiary)", fontSize: "12px" }}
+              style={{ color: "var(--ink-tertiary)", fontSize: "13px" }}
             >
               niche {event.niche_score?.toFixed(1) ?? "-"} · velocity {event.velocity_score?.toFixed(1) ?? "-"}
             </span>

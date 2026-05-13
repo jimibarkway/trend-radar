@@ -67,12 +67,12 @@ export function SourcePreview({ event }: { event: RawEvent }) {
         }}
       >
         <div style={{ color: "rgba(255,255,255,0.95)" }}>
-          <SourceIcon source="reddit" size={24} />
+          <SourceIcon source="reddit" size={36} />
         </div>
         <span
-          className="t-mono mt-1"
+          className="t-mono mt-2"
           style={{
-            fontSize: "12px",
+            fontSize: "16px",
             fontWeight: 600,
             color: "rgba(255,255,255,0.95)",
             letterSpacing: "-0.02em",
@@ -107,8 +107,8 @@ export function SourcePreview({ event }: { event: RawEvent }) {
         <div
           className="shrink-0 relative overflow-hidden rounded-md flex items-center justify-center"
           style={{
-            width: 144,
-            height: 81,
+            width: TILE_W,
+            height: TILE_H,
             background: "var(--surface-2)",
             border: `1px solid ${colour}33`,
           }}
@@ -116,8 +116,8 @@ export function SourcePreview({ event }: { event: RawEvent }) {
           <Image
             src={`https://icons.duckduckgo.com/ip3/${domain}.ico`}
             alt=""
-            width={48}
-            height={48}
+            width={72}
+            height={72}
             unoptimized
             style={{ objectFit: "contain" }}
           />
@@ -153,9 +153,10 @@ export function SourcePreview({ event }: { event: RawEvent }) {
   return <IconTile colour={colour} source={event.source} />;
 }
 
-// Card preview tile dimensions - bumped from 144x81 so OG card text is legible
-const TILE_W = 184;
-const TILE_H = 104;
+// Card preview tile dimensions. 240x135 (16:9) - big enough that OG card
+// text reads at a glance and YouTube thumbnails feel like real previews.
+const TILE_W = 240;
+const TILE_H = 135;
 
 function ImageTile({
   colour,
@@ -219,7 +220,7 @@ function IconTile({
       }}
     >
       <div style={{ color: colour }}>
-        <SourceIcon source={source} size={32} />
+        <SourceIcon source={source} size={42} />
       </div>
       {children}
     </div>
