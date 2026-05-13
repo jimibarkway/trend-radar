@@ -1,6 +1,7 @@
 import { Snapshot } from "@/lib/snapshot";
 import { sourceLabel, sourceColor, relativeTime } from "@/lib/format";
 import { SourceIcon } from "./SourceIcon";
+import { ClusterGraph } from "./ClusterGraph";
 
 export function ConvergenceTicker({ snapshot }: { snapshot: Snapshot | null }) {
   const clusters = snapshot?.top_clusters ?? [];
@@ -35,46 +36,51 @@ export function ConvergenceTicker({ snapshot }: { snapshot: Snapshot | null }) {
           {clusters.map((c) => (
             <div
               key={c.id}
-              className="rounded-lg p-6 transition-colors"
+              className="flex gap-5 rounded-lg p-5 md:p-6 transition-colors"
               style={{ background: "var(--surface-1)", border: "1px solid var(--hairline)" }}
             >
-              <div className="mb-3 flex flex-wrap items-center gap-2">
-                {c.sources.map((s) => (
-                  <span
-                    key={s}
-                    className="t-micro-label inline-flex items-center gap-1.5 rounded px-2 py-1"
-                    style={{
-                      background: sourceColor(s) + "22",
-                      color: sourceColor(s),
-                      border: `1px solid ${sourceColor(s)}44`,
-                    }}
-                  >
-                    <SourceIcon source={s} size={11} />
-                    {sourceLabel(s)}
-                  </span>
-                ))}
-                <span className="t-supporting ml-auto" style={{ color: "var(--ink-tertiary)" }}>
-                  cluster {c.cluster_score.toFixed(1)}
-                </span>
+              <div className="shrink-0">
+                <ClusterGraph cluster={c} size={140} />
               </div>
-              <h3 className="t-body-lead mb-3" style={{ color: "var(--ink)" }}>
-                {c.centroid_title}
-              </h3>
-              <p className="t-supporting mb-3">
-                {c.member_count} signals across {c.source_count} sources · first seen{" "}
-                {relativeTime(c.first_seen)}
-              </p>
-              {c.members[0] && (
-                <a
-                  href={c.members[0].url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="t-supporting"
-                  style={{ color: "var(--accent)" }}
-                >
-                  See top-scoring member →
-                </a>
-              )}
+              <div className="min-w-0 flex-1">
+                <div className="mb-3 flex flex-wrap items-center gap-2">
+                  {c.sources.map((s) => (
+                    <span
+                      key={s}
+                      className="t-micro-label inline-flex items-center gap-1.5 rounded px-2 py-1"
+                      style={{
+                        background: sourceColor(s) + "22",
+                        color: sourceColor(s),
+                        border: `1px solid ${sourceColor(s)}44`,
+                      }}
+                    >
+                      <SourceIcon source={s} size={11} />
+                      {sourceLabel(s)}
+                    </span>
+                  ))}
+                </div>
+                <h3 className="t-body-lead mb-2" style={{ color: "var(--ink)" }}>
+                  {c.centroid_title}
+                </h3>
+                <p className="t-supporting mb-3">
+                  {c.member_count} signals · cluster score{" "}
+                  <span className="t-mono" style={{ color: "var(--accent)" }}>
+                    {c.cluster_score.toFixed(1)}
+                  </span>{" "}
+                  · first seen {relativeTime(c.first_seen)}
+                </p>
+                {c.members[0] && (
+                  <a
+                    href={c.members[0].url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="t-supporting"
+                    style={{ color: "var(--accent)" }}
+                  >
+                    See top-scoring member →
+                  </a>
+                )}
+              </div>
             </div>
           ))}
         </div>

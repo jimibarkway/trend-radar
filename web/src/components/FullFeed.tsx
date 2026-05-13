@@ -135,6 +135,34 @@ export function FullFeed({ snapshot }: { snapshot: Snapshot | null }) {
   );
 }
 
+function ScoreBar({ score }: { score: number | undefined }) {
+  const s = score ?? 0;
+  const pct = Math.max(0, Math.min(100, s));
+  // colour ramp: low (subtle) -> mid (rising amber) -> high (accent green)
+  const colour =
+    pct >= 70 ? "var(--accent)" : pct >= 50 ? "var(--rising)" : "var(--ink-subtle)";
+  return (
+    <div className="flex items-center justify-end gap-2.5 min-w-[110px]">
+      <div
+        className="hidden md:block h-1.5 w-16 rounded-full overflow-hidden"
+        style={{ background: "var(--surface-3)" }}
+      >
+        <div
+          style={{
+            width: `${pct}%`,
+            height: "100%",
+            background: colour,
+            transition: "width 600ms ease-out",
+          }}
+        />
+      </div>
+      <span className="t-mono" style={{ color: colour, minWidth: 28, textAlign: "right" }}>
+        {formatScore(score)}
+      </span>
+    </div>
+  );
+}
+
 function Th({ children, align = "left" }: { children: React.ReactNode; align?: "left" | "right" }) {
   return (
     <th
@@ -184,8 +212,8 @@ function Row({ event, stripe }: { event: RawEvent; stripe: boolean }) {
           </span>
         )}
       </td>
-      <td className="px-4 py-3 align-top text-right t-mono" style={{ color: "var(--accent)" }}>
-        {formatScore(event.composite_score)}
+      <td className="px-4 py-3 align-top">
+        <ScoreBar score={event.composite_score} />
       </td>
       <td className="px-4 py-3 align-top text-right t-mono" style={{ color: "var(--ink-muted)" }}>
         {event.niche_score?.toFixed(1) ?? "-"}
