@@ -21,15 +21,10 @@ export function HowItWorks({ snapshot }: { snapshot: Snapshot | null }) {
       className="mx-auto w-full max-w-[1200px] px-4 md:px-6 py-16 md:py-24"
       style={{ borderTop: "1px solid var(--hairline)" }}
     >
-      <p className="t-micro-label mb-4" style={{ color: "var(--accent)" }}>
+      <p className="t-micro-label mb-3" style={{ color: "var(--accent)" }}>
         How it works
       </p>
-      <h2 className="t-headline mb-3">Six sources. Velocity over popularity.</h2>
-      <p className="t-supporting mb-10 max-w-[64ch]">
-        Every signal is scored on three axes by Gemini Flash-Lite: niche fit
-        (0-10), velocity per source (stars/day, views/hour, upvotes/hour), and
-        freshness. Composite = (niche × 5) + (velocity × 3) + (freshness × 2).
-      </p>
+      <h2 className="t-headline mb-8">Six sources. Velocity over popularity.</h2>
 
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
         {sources.map((s) => {

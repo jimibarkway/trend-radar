@@ -11,7 +11,7 @@ export function TopGem({ snapshot }: { snapshot: Snapshot | null }) {
       className="mx-auto w-full max-w-[1200px] px-4 md:px-6 py-16 md:py-24"
       style={{ borderTop: "1px solid var(--hairline)" }}
     >
-      <p className="t-micro-label mb-4" style={{ color: "var(--accent)" }}>
+      <p className="t-micro-label mb-3" style={{ color: "var(--accent)" }}>
         Today&apos;s top hidden gem
       </p>
 

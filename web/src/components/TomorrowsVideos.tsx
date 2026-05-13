@@ -14,15 +14,14 @@ export function TomorrowsVideos({ snapshot }: { snapshot: Snapshot | null }) {
       className="mx-auto w-full max-w-[1200px] px-4 md:px-6 py-16 md:py-24"
       style={{ borderTop: "1px solid var(--hairline)" }}
     >
-      <p className="t-micro-label mb-4" style={{ color: "var(--rising)" }}>
+      <p className="t-micro-label mb-3" style={{ color: "var(--rising)" }}>
         Tomorrow&apos;s videos
       </p>
-      <h2 className="t-headline mb-3">Top opportunities as ready-to-record drafts</h2>
-      <p className="t-supporting mb-10 max-w-[64ch]">
-        Each draft comes from Gemini 2.5 Pro using the creator&apos;s voice rules
-        (visceral-enemy hook in sentence two, no em dashes, no hype slop).
-        Click to expand the title alts, the spoken hook, and the 30-second outline.
-      </p>
+      <h2 className="t-headline mb-8">
+        {videos.length > 0
+          ? `${videos.length} drafts ready to record`
+          : "Top opportunities as drafts"}
+      </h2>
 
       {videos.length === 0 ? (
         <div

@@ -4,92 +4,91 @@ import { useMemo, useState } from "react";
 import type { RawEvent, Snapshot } from "@/lib/snapshot";
 import { sourceLabel, sourceColor, relativeTime, formatScore } from "@/lib/format";
 import { SourceIcon } from "./SourceIcon";
+import { SourcePreview } from "./SourcePreview";
 
-const SOURCES = [
-  "all",
-  "github_release",
+type SourceFilter = "all" | string;
+
+const SOURCE_PILLS = [
   "github_trending",
+  "github_release",
   "youtube_upload",
   "youtube_search",
   "reddit",
   "rss",
   "x",
-] as const;
+];
 
 export function FullFeed({ snapshot }: { snapshot: Snapshot | null }) {
   const opportunities = snapshot?.top_opportunities ?? [];
-  const [source, setSource] = useState<string>("all");
-  const [minScore, setMinScore] = useState<number>(0);
-  const [query, setQuery] = useState<string>("");
+  const [enabled, setEnabled] = useState<Set<string>>(
+    () => new Set(SOURCE_PILLS),
+  );
+  const [query, setQuery] = useState("");
+  const [view, setView] = useState<"cards" | "table">("cards");
+  const [showAll, setShowAll] = useState(false);
 
   const filtered = useMemo(() => {
     return opportunities.filter((o) => {
-      if (source !== "all" && o.source !== source) return false;
-      if ((o.composite_score ?? 0) < minScore) return false;
+      if (!enabled.has(o.source)) return false;
       if (query && !o.title.toLowerCase().includes(query.toLowerCase())) return false;
       return true;
     });
-  }, [opportunities, source, minScore, query]);
+  }, [opportunities, enabled, query]);
+
+  const visible = view === "cards" && !showAll ? filtered.slice(0, 10) : filtered;
+
+  function toggleSource(s: string) {
+    const next = new Set(enabled);
+    if (next.has(s)) next.delete(s);
+    else next.add(s);
+    if (next.size === 0) {
+      // Avoid no-source dead-end
+      SOURCE_PILLS.forEach((p) => next.add(p));
+    }
+    setEnabled(next);
+  }
 
   return (
     <section
       className="mx-auto w-full max-w-[1200px] px-4 md:px-6 py-16 md:py-24"
       style={{ borderTop: "1px solid var(--hairline)" }}
     >
-      <p className="t-micro-label mb-4" style={{ color: "var(--accent)" }}>
-        The full feed
+      <p className="t-micro-label mb-3" style={{ color: "var(--accent)" }}>
+        Full feed
       </p>
-      <h2 className="t-headline mb-3">All scored signals, filterable</h2>
-      <p className="t-supporting mb-8 max-w-[60ch]">
-        Composite = (niche × 5) + (velocity × 3) + (freshness × 2). Click any row
-        to open the source.
-      </p>
+      <h2 className="t-headline mb-8">{filtered.length} scored signals, filterable</h2>
+
+      {/* Source pills + search + view toggle */}
+      <div className="mb-6 flex flex-wrap items-center gap-2">
+        {SOURCE_PILLS.map((s) => {
+          const on = enabled.has(s);
+          const col = sourceColor(s);
+          return (
+            <button
+              key={s}
+              onClick={() => toggleSource(s)}
+              className="t-micro-label inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 transition-all"
+              style={{
+                background: on ? col + "22" : "transparent",
+                color: on ? col : "var(--ink-tertiary)",
+                borderColor: on ? col + "55" : "var(--hairline)",
+                cursor: "pointer",
+              }}
+            >
+              <SourceIcon source={s} size={11} />
+              {sourceLabel(s)}
+            </button>
+          );
+        })}
+      </div>
 
       <div className="mb-6 flex flex-wrap items-center gap-3">
-        <label className="t-supporting" style={{ color: "var(--ink-muted)" }}>
-          Source{" "}
-          <select
-            value={source}
-            onChange={(e) => setSource(e.target.value)}
-            className="ml-2 rounded border px-2 py-1 t-mono"
-            style={{
-              background: "var(--surface-2)",
-              borderColor: "var(--hairline)",
-              color: "var(--ink)",
-            }}
-          >
-            {SOURCES.map((s) => (
-              <option key={s} value={s}>
-                {s === "all" ? "all sources" : sourceLabel(s)}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <label className="t-supporting" style={{ color: "var(--ink-muted)" }}>
-          Min composite{" "}
-          <input
-            type="number"
-            value={minScore}
-            min={0}
-            max={100}
-            step={5}
-            onChange={(e) => setMinScore(Number(e.target.value) || 0)}
-            className="ml-2 w-20 rounded border px-2 py-1 t-mono"
-            style={{
-              background: "var(--surface-2)",
-              borderColor: "var(--hairline)",
-              color: "var(--ink)",
-            }}
-          />
-        </label>
-
         <input
           type="search"
-          placeholder="Filter by title..."
+          placeholder="Filter by title…"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className="flex-1 min-w-[200px] max-w-md rounded border px-3 py-1 t-body"
+          className="flex-1 min-w-[200px] max-w-md rounded-md border px-3 py-2 t-body"
           style={{
             background: "var(--surface-2)",
             borderColor: "var(--hairline)",
@@ -97,98 +96,208 @@ export function FullFeed({ snapshot }: { snapshot: Snapshot | null }) {
             fontSize: "14px",
           }}
         />
-
-        <span className="ml-auto t-supporting" style={{ color: "var(--ink-tertiary)" }}>
-          {filtered.length} of {opportunities.length}
-        </span>
+        <div
+          className="inline-flex rounded-md border overflow-hidden"
+          style={{ borderColor: "var(--hairline)" }}
+        >
+          <ViewBtn current={view} value="cards" onClick={() => setView("cards")}>
+            Cards
+          </ViewBtn>
+          <ViewBtn current={view} value="table" onClick={() => setView("table")}>
+            Table
+          </ViewBtn>
+        </div>
       </div>
 
       {opportunities.length === 0 ? (
-        <div
-          className="rounded-lg p-10"
-          style={{ background: "var(--surface-1)", border: "1px solid var(--hairline)" }}
-        >
-          <p className="t-supporting">No scored signals yet. Run <code className="t-mono">make pipeline</code>.</p>
-        </div>
+        <Empty />
+      ) : view === "cards" ? (
+        <>
+          <div className="grid grid-cols-1 gap-3">
+            {visible.map((o) => (
+              <FeedCard key={o.id} event={o} />
+            ))}
+          </div>
+          {filtered.length > visible.length && (
+            <button
+              onClick={() => setShowAll(true)}
+              className="mt-6 inline-flex items-center gap-2 rounded-md border px-5 py-2 t-supporting transition-colors"
+              style={{
+                borderColor: "var(--hairline-strong)",
+                color: "var(--ink-muted)",
+                background: "transparent",
+                cursor: "pointer",
+              }}
+            >
+              Show {filtered.length - visible.length} more ↓
+            </button>
+          )}
+          {showAll && filtered.length > 10 && (
+            <button
+              onClick={() => setShowAll(false)}
+              className="mt-6 ml-3 inline-flex items-center gap-2 rounded-md px-3 py-2 t-supporting transition-colors"
+              style={{ color: "var(--ink-tertiary)", cursor: "pointer" }}
+            >
+              Collapse
+            </button>
+          )}
+        </>
       ) : (
-        <div className="overflow-x-auto rounded-lg" style={{ border: "1px solid var(--hairline)" }}>
-          <table className="w-full t-body">
-            <thead style={{ background: "var(--surface-2)" }}>
-              <tr style={{ borderBottom: "1px solid var(--hairline)" }}>
-                <Th>Source</Th>
-                <Th>Title</Th>
-                <Th align="right">Composite</Th>
-                <Th align="right">Niche</Th>
-                <Th align="right">Velocity</Th>
-                <Th align="right">Published</Th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((o, i) => (
-                <Row key={o.id} event={o} stripe={i % 2 === 1} />
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <TableView events={filtered} />
       )}
     </section>
   );
 }
 
-function ScoreBar({ score }: { score: number | undefined }) {
-  const s = score ?? 0;
-  const pct = Math.max(0, Math.min(100, s));
-  // colour ramp: low (subtle) -> mid (rising amber) -> high (accent green)
-  const colour =
-    pct >= 70 ? "var(--accent)" : pct >= 50 ? "var(--rising)" : "var(--ink-subtle)";
+function ViewBtn({
+  current,
+  value,
+  children,
+  onClick,
+}: {
+  current: string;
+  value: string;
+  children: React.ReactNode;
+  onClick: () => void;
+}) {
+  const active = current === value;
   return (
-    <div className="flex items-center justify-end gap-2.5 min-w-[110px]">
-      <div
-        className="hidden md:block h-1.5 w-16 rounded-full overflow-hidden"
-        style={{ background: "var(--surface-3)" }}
-      >
-        <div
-          style={{
-            width: `${pct}%`,
-            height: "100%",
-            background: colour,
-            transition: "width 600ms ease-out",
-          }}
-        />
-      </div>
-      <span className="t-mono" style={{ color: colour, minWidth: 28, textAlign: "right" }}>
-        {formatScore(score)}
-      </span>
+    <button
+      onClick={onClick}
+      className="t-micro-label px-3 py-2 transition-colors"
+      style={{
+        background: active ? "var(--surface-2)" : "transparent",
+        color: active ? "var(--ink)" : "var(--ink-tertiary)",
+        cursor: "pointer",
+      }}
+    >
+      {children}
+    </button>
+  );
+}
+
+function Empty() {
+  return (
+    <div
+      className="rounded-lg p-10"
+      style={{ background: "var(--surface-1)", border: "1px solid var(--hairline)" }}
+    >
+      <p className="t-supporting">
+        No scored signals yet. Run <code className="t-mono">make pipeline</code>.
+      </p>
     </div>
   );
 }
 
-function Th({ children, align = "left" }: { children: React.ReactNode; align?: "left" | "right" }) {
+function FeedCard({ event }: { event: RawEvent }) {
+  const col = sourceColor(event.source);
+  const score = event.composite_score ?? 0;
+  const scoreColour = score >= 70 ? "var(--accent)" : score >= 50 ? "var(--rising)" : "var(--ink-subtle)";
   return (
-    <th
-      className="px-4 py-3 t-micro-label font-medium"
-      style={{ textAlign: align, color: "var(--ink-tertiary)" }}
+    <a
+      href={event.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="block rounded-lg overflow-hidden transition-colors"
+      style={{
+        background: "var(--surface-1)",
+        border: "1px solid var(--hairline)",
+        borderLeft: `3px solid ${col}`,
+      }}
     >
-      {children}
-    </th>
+      <div className="flex gap-4 p-4">
+        <SourcePreview event={event} />
+        <div className="min-w-0 flex-1">
+          <div className="mb-1.5 flex flex-wrap items-center gap-2">
+            <span
+              className="t-micro-label inline-flex items-center gap-1.5 rounded px-2 py-0.5"
+              style={{
+                background: col + "22",
+                color: col,
+                border: `1px solid ${col}44`,
+              }}
+            >
+              <SourceIcon source={event.source} size={10} />
+              {sourceLabel(event.source)}
+            </span>
+            <span className="t-supporting" style={{ color: "var(--ink-tertiary)" }}>
+              {relativeTime(event.published_at)}
+            </span>
+            {event.author && (
+              <span className="t-supporting truncate max-w-[180px]" style={{ color: "var(--ink-tertiary)" }}>
+                · {event.author}
+              </span>
+            )}
+          </div>
+          <h3
+            className="t-body line-clamp-2 mb-2"
+            style={{ color: "var(--ink)", fontSize: "15px", fontWeight: 500 }}
+          >
+            {event.title}
+          </h3>
+          <div className="flex items-center gap-3">
+            <div
+              className="h-1 flex-1 max-w-[160px] rounded-full overflow-hidden"
+              style={{ background: "var(--surface-3)" }}
+            >
+              <div
+                style={{
+                  width: `${Math.min(100, score)}%`,
+                  height: "100%",
+                  background: scoreColour,
+                }}
+              />
+            </div>
+            <span className="t-mono" style={{ color: scoreColour, fontSize: "12px" }}>
+              {formatScore(event.composite_score)}
+            </span>
+            <span className="t-supporting" style={{ color: "var(--ink-tertiary)" }}>
+              n {event.niche_score?.toFixed(1) ?? "-"} · v {event.velocity_score?.toFixed(1) ?? "-"}
+            </span>
+          </div>
+        </div>
+      </div>
+    </a>
   );
 }
 
-function Row({ event, stripe }: { event: RawEvent; stripe: boolean }) {
+function TableView({ events }: { events: RawEvent[] }) {
   return (
-    <tr
-      style={{
-        borderBottom: "1px solid var(--hairline)",
-        background: stripe ? "var(--surface-2)" : "transparent",
-      }}
-    >
+    <div className="overflow-x-auto rounded-lg" style={{ border: "1px solid var(--hairline)" }}>
+      <table className="w-full t-body">
+        <thead style={{ background: "var(--surface-2)" }}>
+          <tr style={{ borderBottom: "1px solid var(--hairline)" }}>
+            <Th>Source</Th>
+            <Th>Title</Th>
+            <Th align="right">Composite</Th>
+            <Th align="right">Niche</Th>
+            <Th align="right">Velocity</Th>
+            <Th align="right">Published</Th>
+          </tr>
+        </thead>
+        <tbody>
+          {events.map((o, i) => (
+            <TableRow key={o.id} event={o} stripe={i % 2 === 1} />
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function TableRow({ event, stripe }: { event: RawEvent; stripe: boolean }) {
+  const col = sourceColor(event.source);
+  const score = event.composite_score ?? 0;
+  const scoreColour = score >= 70 ? "var(--accent)" : score >= 50 ? "var(--rising)" : "var(--ink-subtle)";
+  return (
+    <tr style={{ borderBottom: "1px solid var(--hairline)", background: stripe ? "var(--surface-2)" : "transparent" }}>
       <td className="px-4 py-3 align-top">
         <span
           className="t-micro-label inline-flex items-center gap-1.5 rounded px-2 py-1"
           style={{
-            background: sourceColor(event.source) + "22",
-            color: sourceColor(event.source),
-            border: `1px solid ${sourceColor(event.source)}44`,
+            background: col + "22",
+            color: col,
+            border: `1px solid ${col}44`,
             whiteSpace: "nowrap",
           }}
         >
@@ -206,14 +315,9 @@ function Row({ event, stripe }: { event: RawEvent; stripe: boolean }) {
         >
           {event.title}
         </a>
-        {event.author && (
-          <span className="t-supporting mt-1 block" style={{ color: "var(--ink-tertiary)" }}>
-            {event.author}
-          </span>
-        )}
       </td>
-      <td className="px-4 py-3 align-top">
-        <ScoreBar score={event.composite_score} />
+      <td className="px-4 py-3 align-top text-right t-mono" style={{ color: scoreColour }}>
+        {formatScore(event.composite_score)}
       </td>
       <td className="px-4 py-3 align-top text-right t-mono" style={{ color: "var(--ink-muted)" }}>
         {event.niche_score?.toFixed(1) ?? "-"}
@@ -225,5 +329,16 @@ function Row({ event, stripe }: { event: RawEvent; stripe: boolean }) {
         {relativeTime(event.published_at)}
       </td>
     </tr>
+  );
+}
+
+function Th({ children, align = "left" }: { children: React.ReactNode; align?: "left" | "right" }) {
+  return (
+    <th
+      className="px-4 py-3 t-micro-label font-medium"
+      style={{ textAlign: align, color: "var(--ink-tertiary)" }}
+    >
+      {children}
+    </th>
   );
 }
