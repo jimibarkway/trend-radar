@@ -1,0 +1,7 @@
+/design-research/
+*.pyc
+__pycache__/
+.env
+node_modules/
+.next/
+*.db
