@@ -81,7 +81,82 @@ make dev               # http://localhost:3000
 
 The dashboard reads `web/public/snapshot.json` locally and the Vercel Blob URL in production (set `NEXT_PUBLIC_SNAPSHOT_URL` and `BLOB_READ_WRITE_TOKEN`).
 
-A seed snapshot ships with 495 real signals so the dashboard renders something on the first paint, before the pipeline has run.
+A seed snapshot ships so the dashboard renders something on the first paint, before your pipeline has run.
+
+---
+
+## Fork it for your niche
+
+This repo is wired for AI / agentic-workflow content. To point it at your niche:
+
+### 1. Get the keys
+
+| Key | Required? | Where to get it | What it does |
+|---|---|---|---|
+| `GOOGLE_API_KEY` | **Required** | [aistudio.google.com/apikey](https://aistudio.google.com/apikey) | Gemini Flash-Lite scoring, embeddings, angle generation. Free tier is enough. |
+| `YOUTUBE_API_KEY` | Recommended | [console.cloud.google.com](https://console.cloud.google.com) → enable "YouTube Data API v3" | YouTube channel + search ingestion |
+| `TAVILY_API_KEY` | Optional | [tavily.com](https://tavily.com) | Reddit ingestion. 1000 searches/mo free. |
+| `APIFY_TOKEN` | Optional | [console.apify.com](https://console.apify.com) | X / Twitter ingestion. Paid, ~£0.20/mo at 12h cadence. |
+| `BLOB_READ_WRITE_TOKEN` | Production only | Vercel project → Storage → Blob → Create | Hosts the live snapshot.json. Free hobby tier. |
+
+Copy `.env.example` to `.env` and paste them in. `.env` is gitignored.
+
+### 2. Tell the LLM what your niche is
+
+Edit `pipeline/config/niche.json` and rewrite the `description` field for your creator focus. This is the system prompt the scoring LLM uses to rate every signal 0-10 for relevance. Be specific about what counts and what doesn't.
+
+### 3. Tell the pipeline where to look
+
+Each source has its own config in `pipeline/config/`:
+
+- `channels.json` - YouTube channels in your niche (need `channel_id`, get from the channel's About page → ⚙️ Share → Channel ID)
+- `github_repos.json` - canonical repos to poll for releases (`owner/repo` format, priority high/med/low)
+- `rss_feeds.json` - RSS feeds + the keyword filter for "filter_required: true" feeds
+- `reddit_subs.json` - subreddits to query via Tavily
+- `youtube_searches.json` - generic search queries that catch viral videos outside your channel list
+- `x_keywords.example.json` - copy to `x_keywords.json` and add your keywords + `from:@account` watches
+
+### 4. Rebrand the dashboard
+
+The repo currently ships with Jimi Barkway's name on the public dashboard. For your fork:
+
+- `LICENSE` - swap the copyright line to your name
+- `web/src/components/Footer.tsx` - update the byline + YouTube link
+- `web/src/app/opengraph-image.tsx` - update the footer text in the dynamic OG image
+- `web/src/app/layout.tsx` - update the page metadata title / description / OG title
+- `web/src/components/Hero.tsx` - the headline copy ("Finds AI topics before they hit mainstream") if your niche isn't AI
+
+### 5. Run it
+
+```bash
+make install
+make pipeline   # first full run (5-10 min depending on Gemini RPM)
+make dev        # http://localhost:3000
+```
+
+### 6. Schedule it
+
+For an always-live dashboard, install the cron entries on a server / VPS:
+
+```cron
+# Hourly light pipeline
+0 * * * * /path/to/trend-radar/scripts/run_hourly.sh
+# 12-hourly heavy pipeline (X + angles)
+30 2,14 * * * /path/to/trend-radar/scripts/run_daily.sh
+```
+
+Logs land in `logs/pipeline.log`.
+
+### 7. Deploy the dashboard
+
+Trend Radar is set up for Vercel out of the box. Steps:
+
+1. Create a Vercel project from your fork. Set "Root Directory" to `web`.
+2. Add env vars to the project: `NEXT_PUBLIC_SNAPSHOT_URL` (the public Vercel Blob URL of your snapshot.json) and `BLOB_READ_WRITE_TOKEN`.
+3. Push to your default branch. Vercel auto-deploys on every push.
+4. Optional: add a custom domain at `vercel.com → Project → Settings → Domains`.
+
+Your pipeline cron uploads a fresh snapshot.json to the Blob URL every hour, and the dashboard re-fetches it at the edge every 5 minutes via Next.js ISR.
 
 ---
 
