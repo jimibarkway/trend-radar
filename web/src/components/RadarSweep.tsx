@@ -109,18 +109,31 @@ export function RadarSweep() {
       <style>{`
         .radar-wrap {
           position: absolute;
-          right: -260px;
+          /* Anchor to the VIEWPORT right edge so the radar bleeds off
+             regardless of how wide the screen is. Pull the centre slightly
+             off-screen so half is visible, half off the page. */
+          right: -360px;
           top: 50%;
           transform: translateY(-50%);
-          width: 800px;
-          height: 800px;
-          mask-image: radial-gradient(circle at center, black 60%, transparent 85%);
-          -webkit-mask-image: radial-gradient(circle at center, black 60%, transparent 85%);
+          width: 1100px;
+          height: 1100px;
+          mask-image: radial-gradient(circle at center, black 55%, transparent 85%);
+          -webkit-mask-image: radial-gradient(circle at center, black 55%, transparent 85%);
         }
-        @media (max-width: 768px) {
+        @media (max-width: 1024px) {
           .radar-wrap {
-            right: -380px;
-            opacity: 0.6;
+            right: -440px;
+            width: 950px;
+            height: 950px;
+            opacity: 0.75;
+          }
+        }
+        @media (max-width: 640px) {
+          .radar-wrap {
+            right: -480px;
+            width: 800px;
+            height: 800px;
+            opacity: 0.55;
           }
         }
         .radar-svg {
