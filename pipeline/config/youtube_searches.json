@@ -1,0 +1,9 @@
+{
+  "_comment": "YouTube search queries polled hourly. Catches viral videos that are NOT from the channel list (new accounts, breakout videos).",
+  "queries": [
+    "new ai update",
+    "new ai destroys",
+    "AI tool that just dropped",
+    "new claude code feature"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "_comment": "Reddit subreddits scraped daily via Tavily.",
+  "subreddits": [
+    {"name": "LocalLLaMA", "priority": "high"},
+    {"name": "AI_Agents", "priority": "high"},
+    {"name": "ClaudeAI", "priority": "high"},
+    {"name": "ChatGPTCoding", "priority": "med"},
+    {"name": "MachineLearning", "priority": "med"},
+    {"name": "Automate", "priority": "med"},
+    {"name": "ArtificialIntelligence", "priority": "med"},
+    {"name": "AIToolsCatalog", "priority": "low"}
+  ],
+  "search_window_hours": 24,
+  "max_results_per_sub": 8
+}

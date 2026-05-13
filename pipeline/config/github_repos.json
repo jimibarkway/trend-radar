@@ -1,0 +1,20 @@
+{
+  "_comment": "Canonical repos polled every 5 min for new releases. Each entry: 'repo' (owner/name), 'priority' (high/med/low), 'note'. Add or remove freely.",
+  "repos": [
+    {"repo": "anthropics/claude-code", "priority": "high", "note": "Claude Code CLI"},
+    {"repo": "anthropics/anthropic-sdk-python", "priority": "med", "note": "Anthropic SDK"},
+    {"repo": "anthropics/anthropic-cookbook", "priority": "med", "note": "Anthropic patterns"},
+    {"repo": "modelcontextprotocol/modelcontextprotocol", "priority": "high", "note": "MCP spec"},
+    {"repo": "modelcontextprotocol/python-sdk", "priority": "high", "note": "MCP python SDK"},
+    {"repo": "modelcontextprotocol/typescript-sdk", "priority": "high", "note": "MCP TS SDK"},
+    {"repo": "n8n-io/n8n", "priority": "high", "note": "n8n core"},
+    {"repo": "langchain-ai/langchain", "priority": "med", "note": "LangChain"},
+    {"repo": "langchain-ai/langgraph", "priority": "high", "note": "LangGraph"},
+    {"repo": "openai/openai-python", "priority": "med", "note": "OpenAI SDK"},
+    {"repo": "openai/codex", "priority": "high", "note": "Codex CLI"},
+    {"repo": "ollama/ollama", "priority": "high", "note": "Ollama runtime"},
+    {"repo": "microsoft/autogen", "priority": "med", "note": "Microsoft AutoGen"},
+    {"repo": "crewAIInc/crewAI", "priority": "med", "note": "CrewAI"},
+    {"repo": "NousResearch/hermes-agent", "priority": "high", "note": "Hermes Agent"}
+  ]
+}

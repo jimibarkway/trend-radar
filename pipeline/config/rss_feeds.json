@@ -1,0 +1,27 @@
+{
+  "_comment": "RSS feeds polled for new items. 'filter_required'=true applies the keyword filter post-fetch.",
+  "feeds": [
+    {"name": "Anthropic News", "url": "https://www.anthropic.com/news/rss.xml", "priority": "high", "filter_required": false},
+    {"name": "OpenAI Blog", "url": "https://openai.com/blog/rss.xml", "priority": "high", "filter_required": false},
+    {"name": "Google DeepMind", "url": "https://blog.google/technology/google-deepmind/rss/", "priority": "high", "filter_required": false},
+    {"name": "GitHub Blog", "url": "https://github.blog/feed/", "priority": "med", "filter_required": true},
+    {"name": "Changelog", "url": "https://changelog.com/feed", "priority": "med", "filter_required": true},
+    {"name": "Latent Space", "url": "https://www.latent.space/feed", "priority": "high", "filter_required": false},
+    {"name": "Every", "url": "https://every.to/feed.xml", "priority": "med", "filter_required": true},
+    {"name": "Hacker News", "url": "https://news.ycombinator.com/rss", "priority": "low", "filter_required": true},
+    {"name": "Simon Willison", "url": "https://simonwillison.net/atom/everything/", "priority": "high", "filter_required": false},
+    {"name": "Hugging Face Blog", "url": "https://huggingface.co/blog/feed.xml", "priority": "med", "filter_required": false},
+    {"name": "Y Combinator Blog", "url": "https://www.ycombinator.com/blog/rss", "priority": "high", "filter_required": true},
+    {"name": "Last Week in AI", "url": "https://lastweekin.ai/feed", "priority": "high", "filter_required": false},
+    {"name": "TechCrunch AI", "url": "https://techcrunch.com/category/artificial-intelligence/feed/", "priority": "med", "filter_required": false},
+    {"name": "arXiv cs.AI", "url": "https://export.arxiv.org/rss/cs.AI", "priority": "low", "filter_required": true},
+    {"name": "Pragmatic Engineer", "url": "https://newsletter.pragmaticengineer.com/feed", "priority": "med", "filter_required": true},
+    {"name": "AI Tidbits", "url": "https://www.aitidbits.ai/feed", "priority": "med", "filter_required": false},
+    {"name": "Buttondown AINews", "url": "https://buttondown.email/ainews/rss", "priority": "high", "filter_required": false}
+  ],
+  "keyword_filter": [
+    "ai", "llm", "agent", "claude", "openai", "anthropic", "mcp", "model context",
+    "gemini", "gemma", "ollama", "n8n", "vibe coding", "agentic", "automation",
+    "claude code", "hermes", "openclaw", "cursor", "antigravity"
+  ]
+}

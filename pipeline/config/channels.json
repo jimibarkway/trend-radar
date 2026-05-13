@@ -1,0 +1,321 @@
+{
+  "channels": [
+    {
+      "name": "Nate Herk | AI Automation",
+      "channel_id": "UC2ojq-nuP8ceeHqiroeKhBA",
+      "handle": "@nateherk",
+      "title": "Nate Herk | AI Automation",
+      "subscriber_count": 734000
+    },
+    {
+      "name": "Jack Roberts",
+      "channel_id": "UCxVxcTULO9cFU6SB9qVaisQ",
+      "handle": "@itssssss_jack",
+      "title": "Jack Roberts",
+      "subscriber_count": 207000
+    },
+    {
+      "name": "Creator Magic",
+      "channel_id": "UC08Fah8EIryeOZRkjBRohcQ",
+      "handle": "@creatormagicai",
+      "title": "Creator Magic",
+      "subscriber_count": 200000
+    },
+    {
+      "name": "David Ondrej",
+      "channel_id": "UCPGrgwfbkjTIgPoOh2q1BAg",
+      "handle": "@davidondrej",
+      "title": "David Ondrej",
+      "subscriber_count": 378000
+    },
+    {
+      "name": "Simon Scrapes",
+      "channel_id": "UCdCR4-uYOg5ju-IUuDnfnQA",
+      "handle": "@simonscrapes",
+      "title": "Simon Scrapes",
+      "subscriber_count": 82800
+    },
+    {
+      "name": "Chase AI",
+      "channel_id": "UCoy6cTJ7Tg0dqS-DI-_REsA",
+      "handle": "@chase-h-ai",
+      "title": "Chase AI",
+      "subscriber_count": 123000
+    },
+    {
+      "name": "Jay E | RoboNuggets",
+      "channel_id": "UCgscS8mBsQZ5sFRkJIFWD7Q",
+      "handle": "@robonuggets",
+      "title": "Jay E | RoboNuggets",
+      "subscriber_count": 147000
+    },
+    {
+      "name": "Nick Saraev",
+      "channel_id": "UCbo-KbSjJDG6JWQ_MTZ_rNA",
+      "handle": "@nicksaraev",
+      "title": "Nick Saraev",
+      "subscriber_count": 417000
+    },
+    {
+      "name": "Alex Finn",
+      "channel_id": "UCfQNB91qRP_5ILeu_S_bSkg",
+      "handle": "@alexfinnofficial",
+      "title": "Alex Finn",
+      "subscriber_count": 199000
+    },
+    {
+      "name": "Cole Medin",
+      "channel_id": "UCMwVTLZIRRUyyVrkjDpn4pA",
+      "handle": "@colemedin",
+      "title": "Cole Medin",
+      "subscriber_count": 205000
+    },
+    {
+      "name": "AI Jason",
+      "channel_id": "UCrXSVX9a1mj8l0CMLwKgMVw",
+      "handle": "@aijasonz",
+      "title": "AI Jason",
+      "subscriber_count": 222000
+    },
+    {
+      "name": "Jono Catliff",
+      "channel_id": "UCnzxPyNnn8jk4bHFk3JUBhA",
+      "handle": "@jonocatliff",
+      "title": "Jono Catliff",
+      "subscriber_count": 135000
+    },
+    {
+      "name": "Liam Ottley",
+      "channel_id": "UCui4jxDaMb53Gdh-AZUTPAg",
+      "handle": "@liamottley",
+      "title": "Liam Ottley",
+      "subscriber_count": 784000
+    },
+    {
+      "name": "Leon van Zyl",
+      "channel_id": "UCtevzRsHEKhs-RK8pAqwSyQ",
+      "handle": "@leonvanzyl",
+      "title": "Leon van Zyl",
+      "subscriber_count": 96800
+    },
+    {
+      "name": "AI Anytime",
+      "channel_id": "UC-zVytOQB62OwMhKRi0TDvg",
+      "handle": "@aianytime",
+      "title": "AI Anytime",
+      "subscriber_count": 47200
+    },
+    {
+      "name": "AI LABS",
+      "channel_id": "UCelfWQr9sXVMTvBzviPGlFw",
+      "handle": "@ailabs-393",
+      "title": "AI LABS",
+      "subscriber_count": 132000
+    },
+    {
+      "name": "IndyDevDan",
+      "channel_id": "UC_x36zCEGilGpB1m-V4gmjg",
+      "handle": "@indydevdan",
+      "title": "IndyDevDan",
+      "subscriber_count": 131000
+    },
+    {
+      "name": "Sean Kochel",
+      "channel_id": "UCFig7skuwYrCIGy0tuZHA2Q",
+      "handle": "@iamseankochel",
+      "title": "Sean Kochel",
+      "subscriber_count": 36300
+    },
+    {
+      "name": "Sabrina Ramonov",
+      "channel_id": "UCiGWNa6QK6CiKPvv5-YPv8g",
+      "handle": "@sabrina_ramonov",
+      "title": "Sabrina Ramonov \ud83c\udf44",
+      "subscriber_count": 249000
+    },
+    {
+      "name": "BitBiasedAI",
+      "channel_id": "UCGIiO6Uo8V8vkuLOcFvf3ZQ",
+      "handle": "@bitbiasedai",
+      "title": "BitBiasedAI",
+      "subscriber_count": 44500,
+      "is_own": false
+    },
+    {
+      "name": "AICodeKing",
+      "channel_id": "UC0m81bQuthaQZmFbXEY9QSw",
+      "handle": "@aicodeking",
+      "title": "AICodeKing",
+      "subscriber_count": 128000,
+      "is_own": false
+    },
+    {
+      "name": "Income stream surfers",
+      "channel_id": "UCctL30i8tVgSS9A37Q532eg",
+      "handle": "@incomestreamsurfers",
+      "title": "Income stream surfers",
+      "subscriber_count": 150000,
+      "is_own": false
+    },
+    {
+      "name": "Rob The AI Guy",
+      "channel_id": "UC0FBv8ckxw1hrZxbUm3G7hA",
+      "handle": "@realrobtheaiguy",
+      "title": "Rob The AI Guy",
+      "subscriber_count": 91800,
+      "is_own": false
+    },
+    {
+      "name": "AI Revolution",
+      "channel_id": "UC5l7RouTQ60oUjLjt1Nh-UQ",
+      "handle": "@airevolutionx",
+      "title": "AI Revolution",
+      "subscriber_count": 544000,
+      "is_own": false
+    },
+    {
+      "name": "Bijan Bowen",
+      "channel_id": "UCOCahKBCEUuzDJawM7yN1dg",
+      "handle": "@bijanbowen",
+      "title": "Bijan Bowen",
+      "subscriber_count": 56100,
+      "is_own": false
+    },
+    {
+      "name": "Vaibhav Sisinty",
+      "channel_id": "UClXAalunTPaX1YV185DWUeg",
+      "handle": "@vaibhavsisinty",
+      "title": "Vaibhav Sisinty",
+      "subscriber_count": 602000,
+      "is_own": false
+    },
+    {
+      "name": "Damian Malliaros",
+      "channel_id": "UCntGhimQ0cQCMIYQizseVFg",
+      "handle": "@softwaregent7443",
+      "title": "Damian Malliaros",
+      "subscriber_count": 12900,
+      "is_own": false
+    },
+    {
+      "name": "Matthew Berman",
+      "channel_id": "UCawZsQWqfGSbCI5yjkdVkTA",
+      "handle": "@matthew_berman",
+      "title": "Matthew Berman",
+      "subscriber_count": 608000,
+      "is_own": false
+    },
+    {
+      "name": "Wes Roth",
+      "channel_id": "UCqcbQf6yw5KzRoDDcZ_wBSw",
+      "handle": "@wesroth",
+      "title": "Wes Roth",
+      "subscriber_count": 319000,
+      "is_own": false
+    },
+    {
+      "name": "Brock Mesarich | AI for Non Techies",
+      "channel_id": "UCjc1vfduI7BhVMXBLJLDjmA",
+      "handle": "@brockmesarich",
+      "title": "Brock Mesarich | AI for Non Techies",
+      "subscriber_count": 106000,
+      "is_own": false
+    },
+    {
+      "name": "Corey McClain",
+      "channel_id": "UC2gtQOm5jFEASO6mg_ibT_Q",
+      "handle": "@iamcoreymcclain",
+      "title": "Corey McClain",
+      "subscriber_count": 44700,
+      "is_own": false
+    },
+    {
+      "name": "Zinho Automates",
+      "channel_id": "UC3i3qKQ5aR_guegQj5bhOMw",
+      "handle": "@zinhoautomates",
+      "title": "Zinho Automates",
+      "subscriber_count": 55900,
+      "is_own": false
+    },
+    {
+      "name": "Ray Amjad",
+      "channel_id": "UCLA7cJBnqr0nLF2bQBD9uUg",
+      "handle": "@ramjad",
+      "title": "Ray Amjad",
+      "subscriber_count": 44100,
+      "is_own": false
+    },
+    {
+      "name": "DevsKingdom",
+      "channel_id": "UC8LbCdO57DhJsCmhUeL-DZA",
+      "handle": "@devskingdom",
+      "title": "DevsKingdom",
+      "subscriber_count": 7050,
+      "is_own": false
+    },
+    {
+      "name": "Bart Slodyczka",
+      "channel_id": "UC8F7X90NDmMr1mGx8897r_A",
+      "handle": "@bartslodyczka",
+      "title": "Bart Slodyczka",
+      "subscriber_count": 67200,
+      "is_own": false
+    },
+    {
+      "name": "WorldofAI",
+      "channel_id": "UC2WmuBuFq6gL08QYG-JjXKw",
+      "handle": "@intheworldofai",
+      "title": "WorldofAI",
+      "subscriber_count": 217000,
+      "is_own": false
+    },
+    {
+      "name": "Universe of AI",
+      "channel_id": "UCYwLV1gDwzGbg7jXQ52bVnQ",
+      "handle": "@universeofaiz",
+      "title": "Universe of AI",
+      "subscriber_count": 23600,
+      "is_own": false
+    },
+    {
+      "name": "Mikey No Code",
+      "channel_id": "UCde0vB0fTwC8AT3sJofFV0w",
+      "handle": "@mikeynocode",
+      "title": "Mikey No Code",
+      "subscriber_count": 127000,
+      "is_own": false
+    },
+    {
+      "name": "Prompt Engineering",
+      "channel_id": "UCDq7SjbgRKty5TgGafW8Clg",
+      "handle": "@engineerprompt",
+      "title": "Prompt Engineering",
+      "subscriber_count": 240000,
+      "is_own": false
+    },
+    {
+      "name": "Paul J Lipsky",
+      "channel_id": "UCmeU2DYiVy80wMBGZzEWnbw",
+      "handle": "@pauljlipsky",
+      "title": "Paul J Lipsky",
+      "subscriber_count": 390000,
+      "is_own": false
+    },
+    {
+      "name": "Tech With Tim",
+      "channel_id": "UC4JX40jDee_tINbkjycV4Sg",
+      "handle": "@techwithtim",
+      "title": "Tech With Tim",
+      "subscriber_count": 2010000,
+      "is_own": false
+    },
+    {
+      "name": "AI Edge",
+      "channel_id": "UC-PQKtrPhk3JXyjUleBLgQQ",
+      "handle": "@aiedgehq",
+      "title": "AI Edge",
+      "subscriber_count": 74300,
+      "is_own": false
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "_comment": "X / Twitter search keywords. Polled every 12 hours via Apify (paid). Copy to x_keywords.json and edit. The from:@account variants are public-account watches.",
+  "keywords": [
+    "claude code",
+    "claude opus",
+    "ai agent",
+    "agentic workflow",
+    "vibe coding",
+    "hermes agent",
+    "openclaw",
+    "ollama",
+    "browser use",
+    "ai automation",
+    "agent framework",
+    "from:OpenAI",
+    "from:GoogleDeepMind",
+    "from:claudeai",
+    "from:perplexity_ai",
+    "from:ollama",
+    "from:NousResearch"
+  ],
+  "search_window_hours": 12,
+  "max_results_per_keyword": 25,
+  "min_engagement_threshold": {
+    "likes": 50,
+    "comment_replies": 5
+  }
+}

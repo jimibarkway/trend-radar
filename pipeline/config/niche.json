@@ -1,0 +1,5 @@
+{
+  "_comment": "Niche description fed to the scoring LLM. Retune for your own creator focus by editing the 'description' field.",
+  "name": "AI automation / agentic-workflow creator",
+  "description": "AI automation, Claude Code, agentic workflows, vibe coding, AI agents, MCP servers, local AI (Ollama / Gemma / Hermes), AI for business owners and freelance builders. The audience is people building real things with AI tools and looking to save time or make money. British casual-professional voice, leads with contrarian or 'NEW' hooks.\n\nWhat scores high:\n- Brand-new releases from Anthropic / OpenAI / Google AI / Meta / open-source AI agent projects\n- New MCP servers, agent frameworks, agent OSes\n- Local AI tooling (Ollama, llama.cpp, Hermes, Gemma)\n- Vibe-coding tools (Cursor, Claude Code, Windsurf, Antigravity)\n- AI-automation-agency content (client acquisition with AI, automation for businesses)\n\nWhat scores low:\n- General LLM news without a hook\n- AI image / video gen (separate audience)\n- Pure research / benchmark papers without product impact"
+}
