@@ -8,7 +8,7 @@ export function Hero({ snapshot }: { snapshot: Snapshot | null }) {
   const lastIngest = snapshot?.meta.last_ingest_at;
 
   return (
-    <section className="mx-auto w-full max-w-[1200px] px-6 pt-32 pb-20">
+    <section className="mx-auto w-full max-w-[1200px] px-4 md:px-6 pt-24 md:pt-32 pb-16 md:pb-20">
       <div className="mb-6 flex items-center gap-3">
         <span
           className="inline-block size-2 rounded-full"
@@ -20,7 +20,7 @@ export function Hero({ snapshot }: { snapshot: Snapshot | null }) {
         </span>
       </div>
 
-      <h1 className="t-display-xl mb-6 max-w-[18ch]">
+      <h1 className="t-display-xl mb-6 max-w-[18ch]" style={{ overflowWrap: "anywhere" }}>
         Finds AI topics before they hit mainstream.
       </h1>
 

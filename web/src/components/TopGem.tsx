@@ -1,5 +1,6 @@
 import { Snapshot } from "@/lib/snapshot";
 import { relativeTime, sourceLabel, sourceColor, gemReasonLabel, formatScore } from "@/lib/format";
+import { SourceIcon } from "./SourceIcon";
 
 export function TopGem({ snapshot }: { snapshot: Snapshot | null }) {
   const gem = snapshot?.hidden_gems?.[0];
@@ -7,7 +8,7 @@ export function TopGem({ snapshot }: { snapshot: Snapshot | null }) {
   return (
     <section
       id="top-gem"
-      className="mx-auto w-full max-w-[1200px] px-6 py-24"
+      className="mx-auto w-full max-w-[1200px] px-4 md:px-6 py-16 md:py-24"
       style={{ borderTop: "1px solid var(--hairline)" }}
     >
       <p className="t-micro-label mb-4" style={{ color: "var(--accent)" }}>
@@ -19,18 +20,19 @@ export function TopGem({ snapshot }: { snapshot: Snapshot | null }) {
           href={gem.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="block rounded-lg p-10 transition-colors"
+          className="block rounded-lg p-6 md:p-10 transition-colors"
           style={{ background: "var(--surface-1)", border: "1px solid var(--hairline)" }}
         >
           <div className="mb-6 flex flex-wrap items-center gap-3">
             <span
-              className="t-micro-label rounded px-2 py-1"
+              className="t-micro-label inline-flex items-center gap-1.5 rounded px-2 py-1"
               style={{
                 background: sourceColor(gem.source) + "22",
                 color: sourceColor(gem.source),
                 border: `1px solid ${sourceColor(gem.source)}44`,
               }}
             >
+              <SourceIcon source={gem.source} size={11} />
               {sourceLabel(gem.source)}
             </span>
             <span

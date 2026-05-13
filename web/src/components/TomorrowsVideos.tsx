@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { Snapshot, TomorrowsVideo } from "@/lib/snapshot";
 import { sourceLabel, sourceColor, formatScore } from "@/lib/format";
+import { SourceIcon } from "./SourceIcon";
 
 export function TomorrowsVideos({ snapshot }: { snapshot: Snapshot | null }) {
   const videos = snapshot?.tomorrows_videos ?? [];
@@ -10,7 +11,7 @@ export function TomorrowsVideos({ snapshot }: { snapshot: Snapshot | null }) {
 
   return (
     <section
-      className="mx-auto w-full max-w-[1200px] px-6 py-24"
+      className="mx-auto w-full max-w-[1200px] px-4 md:px-6 py-16 md:py-24"
       style={{ borderTop: "1px solid var(--hairline)" }}
     >
       <p className="t-micro-label mb-4" style={{ color: "var(--rising)" }}>
@@ -69,13 +70,14 @@ function VideoCard({
       >
         <div className="mb-3 flex flex-wrap items-center gap-3">
           <span
-            className="t-micro-label rounded px-2 py-1"
+            className="t-micro-label inline-flex items-center gap-1.5 rounded px-2 py-1"
             style={{
               background: sourceColor(video.source) + "22",
               color: sourceColor(video.source),
               border: `1px solid ${sourceColor(video.source)}44`,
             }}
           >
+            <SourceIcon source={video.source} size={11} />
             from {sourceLabel(video.source)}
           </span>
           <span className="t-supporting" style={{ color: "var(--ink-tertiary)" }}>

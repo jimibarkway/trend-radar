@@ -4,7 +4,7 @@ import { relativeTime } from "@/lib/format";
 export function Footer({ snapshot }: { snapshot: Snapshot | null }) {
   return (
     <footer
-      className="mx-auto w-full max-w-[1200px] px-6 py-12"
+      className="mx-auto w-full max-w-[1200px] px-4 md:px-6 py-12"
       style={{ borderTop: "1px solid var(--hairline)" }}
     >
       <div className="flex flex-wrap items-center justify-between gap-4">

@@ -1,5 +1,6 @@
 import type { Snapshot } from "@/lib/snapshot";
 import { sourceLabel, sourceColor, formatNumber } from "@/lib/format";
+import { SourceIcon } from "./SourceIcon";
 
 export function HowItWorks({ snapshot }: { snapshot: Snapshot | null }) {
   const counts = snapshot?.meta.counts_by_source ?? {};
@@ -17,7 +18,7 @@ export function HowItWorks({ snapshot }: { snapshot: Snapshot | null }) {
 
   return (
     <section
-      className="mx-auto w-full max-w-[1200px] px-6 py-24"
+      className="mx-auto w-full max-w-[1200px] px-4 md:px-6 py-16 md:py-24"
       style={{ borderTop: "1px solid var(--hairline)" }}
     >
       <p className="t-micro-label mb-4" style={{ color: "var(--accent)" }}>
@@ -42,9 +43,10 @@ export function HowItWorks({ snapshot }: { snapshot: Snapshot | null }) {
             >
               <div className="mb-2 flex items-baseline justify-between">
                 <span
-                  className="t-body-lead"
+                  className="t-body-lead inline-flex items-center gap-2"
                   style={{ color: sourceColor(s.id) }}
                 >
+                  <SourceIcon source={s.id} size={18} />
                   {sourceLabel(s.id)}
                 </span>
                 <span className="t-mono" style={{ color: "var(--ink-muted)" }}>

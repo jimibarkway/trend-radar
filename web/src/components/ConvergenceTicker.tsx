@@ -1,12 +1,13 @@
 import { Snapshot } from "@/lib/snapshot";
 import { sourceLabel, sourceColor, relativeTime } from "@/lib/format";
+import { SourceIcon } from "./SourceIcon";
 
 export function ConvergenceTicker({ snapshot }: { snapshot: Snapshot | null }) {
   const clusters = snapshot?.top_clusters ?? [];
 
   return (
     <section
-      className="mx-auto w-full max-w-[1200px] px-6 py-24"
+      className="mx-auto w-full max-w-[1200px] px-4 md:px-6 py-16 md:py-24"
       style={{ borderTop: "1px solid var(--hairline)" }}
     >
       <p className="t-micro-label mb-4" style={{ color: "var(--accent)" }}>
@@ -41,13 +42,14 @@ export function ConvergenceTicker({ snapshot }: { snapshot: Snapshot | null }) {
                 {c.sources.map((s) => (
                   <span
                     key={s}
-                    className="t-micro-label rounded px-2 py-1"
+                    className="t-micro-label inline-flex items-center gap-1.5 rounded px-2 py-1"
                     style={{
                       background: sourceColor(s) + "22",
                       color: sourceColor(s),
                       border: `1px solid ${sourceColor(s)}44`,
                     }}
                   >
+                    <SourceIcon source={s} size={11} />
                     {sourceLabel(s)}
                   </span>
                 ))}

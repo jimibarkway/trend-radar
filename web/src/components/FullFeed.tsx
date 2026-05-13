@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import type { RawEvent, Snapshot } from "@/lib/snapshot";
 import { sourceLabel, sourceColor, relativeTime, formatScore } from "@/lib/format";
+import { SourceIcon } from "./SourceIcon";
 
 const SOURCES = [
   "all",
@@ -32,7 +33,7 @@ export function FullFeed({ snapshot }: { snapshot: Snapshot | null }) {
 
   return (
     <section
-      className="mx-auto w-full max-w-[1200px] px-6 py-24"
+      className="mx-auto w-full max-w-[1200px] px-4 md:px-6 py-16 md:py-24"
       style={{ borderTop: "1px solid var(--hairline)" }}
     >
       <p className="t-micro-label mb-4" style={{ color: "var(--accent)" }}>
@@ -155,7 +156,7 @@ function Row({ event, stripe }: { event: RawEvent; stripe: boolean }) {
     >
       <td className="px-4 py-3 align-top">
         <span
-          className="t-micro-label rounded px-2 py-1"
+          className="t-micro-label inline-flex items-center gap-1.5 rounded px-2 py-1"
           style={{
             background: sourceColor(event.source) + "22",
             color: sourceColor(event.source),
@@ -163,6 +164,7 @@ function Row({ event, stripe }: { event: RawEvent; stripe: boolean }) {
             whiteSpace: "nowrap",
           }}
         >
+          <SourceIcon source={event.source} size={11} />
           {sourceLabel(event.source)}
         </span>
       </td>

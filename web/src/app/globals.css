@@ -68,12 +68,13 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Typography presets (locked in docs/design-tokens.md). */
-.t-display-xl  { font-size: 80px; font-weight: 600; line-height: 1.0;  letter-spacing: -3px; }
-.t-display-lg  { font-size: 56px; font-weight: 600; line-height: 1.1;  letter-spacing: -1.8px; }
-.t-display-md  { font-size: 40px; font-weight: 600; line-height: 1.15; letter-spacing: -1px; }
-.t-headline    { font-size: 28px; font-weight: 600; line-height: 1.2;  letter-spacing: -0.5px; }
-.t-body-lead   { font-size: 17px; font-weight: 400; line-height: 1.6; }
+/* Typography presets. Fluid sizes via clamp so the display scale collapses
+   gracefully on mobile (hero was wrapping off-screen at 80px). */
+.t-display-xl  { font-size: clamp(38px, 9vw, 80px); font-weight: 600; line-height: 1.02; letter-spacing: -0.04em; }
+.t-display-lg  { font-size: clamp(30px, 6.5vw, 56px); font-weight: 600; line-height: 1.1;  letter-spacing: -0.035em; }
+.t-display-md  { font-size: clamp(26px, 4.5vw, 40px); font-weight: 600; line-height: 1.15; letter-spacing: -0.025em; }
+.t-headline    { font-size: clamp(22px, 3.2vw, 28px); font-weight: 600; line-height: 1.2;  letter-spacing: -0.02em; }
+.t-body-lead   { font-size: clamp(15px, 1.7vw, 17px); font-weight: 400; line-height: 1.6; }
 .t-body        { font-size: 16px; font-weight: 400; line-height: 1.6; }
 .t-supporting  { font-size: 14px; font-weight: 400; line-height: 1.6; color: var(--ink-subtle); }
 .t-micro-label { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-tertiary); }
