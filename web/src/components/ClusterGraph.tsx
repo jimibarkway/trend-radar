@@ -45,10 +45,41 @@ export function ClusterGraph({
       width={size}
       height={size}
       viewBox={`0 0 ${size} ${size}`}
-      className="block shrink-0"
+      className="cluster-graph block shrink-0"
       role="img"
       aria-label={`Cluster of ${cluster.member_count} signals across ${cluster.source_count} sources`}
     >
+      <style>{`
+        .cluster-graph .cg-edge {
+          stroke-dasharray: 3 4;
+          animation: cg-flow 4s linear infinite;
+        }
+        .cluster-graph .cg-node-ring {
+          transform-origin: center;
+          animation: cg-ping 2.4s ease-in-out infinite;
+        }
+        .cluster-graph .cg-centroid-ring {
+          transform-origin: center;
+          animation: cg-pulse 2.4s ease-in-out infinite;
+        }
+        @keyframes cg-flow {
+          from { stroke-dashoffset: 0; }
+          to   { stroke-dashoffset: -14; }
+        }
+        @keyframes cg-ping {
+          0%, 100% { transform: scale(1); opacity: 0.5; }
+          50%      { transform: scale(1.5); opacity: 0; }
+        }
+        @keyframes cg-pulse {
+          0%, 100% { opacity: 0.4; }
+          50%      { opacity: 0.9; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .cluster-graph .cg-edge,
+          .cluster-graph .cg-node-ring,
+          .cluster-graph .cg-centroid-ring { animation: none; }
+        }
+      `}</style>
       {/* Backdrop ring */}
       <circle
         cx={cx}
@@ -59,25 +90,41 @@ export function ClusterGraph({
         strokeWidth="1"
         strokeDasharray="2 3"
       />
-      {/* Edges */}
-      {nodes.map((n) => {
-        const weight = 1 + (n.count / maxCount) * 2.5; // 1px - 3.5px
+      {/* Edges - dashed with flowing offset to suggest data converging in */}
+      {nodes.map((n, i) => {
+        const weight = 1 + (n.count / maxCount) * 2.5;
         return (
           <line
             key={`e-${n.src}`}
+            className="cg-edge"
             x1={cx}
             y1={cy}
             x2={n.x}
             y2={n.y}
             stroke={sourceColor(n.src)}
             strokeWidth={weight}
-            strokeOpacity="0.55"
+            strokeOpacity="0.6"
+            style={{ animationDelay: `${(i * 0.3).toFixed(1)}s` } as React.CSSProperties}
           />
         );
       })}
-      {/* Source nodes */}
-      {nodes.map((n) => (
+      {/* Source nodes - outer ping ring + solid centre */}
+      {nodes.map((n, i) => (
         <g key={`n-${n.src}`}>
+          <circle
+            className="cg-node-ring"
+            cx={n.x}
+            cy={n.y}
+            r="10"
+            fill="none"
+            stroke={sourceColor(n.src)}
+            strokeWidth="1.5"
+            style={{
+              transformBox: "fill-box",
+              transformOrigin: `${n.x}px ${n.y}px`,
+              animationDelay: `${(i * 0.4).toFixed(1)}s`,
+            } as React.CSSProperties}
+          />
           <circle
             cx={n.x}
             cy={n.y}
@@ -99,7 +146,16 @@ export function ClusterGraph({
           </text>
         </g>
       ))}
-      {/* Centroid */}
+      {/* Centroid - pulsing outer ring + solid centre */}
+      <circle
+        className="cg-centroid-ring"
+        cx={cx}
+        cy={cy}
+        r="14"
+        fill="none"
+        stroke="var(--accent)"
+        strokeWidth="1.5"
+      />
       <circle cx={cx} cy={cy} r="10" fill="var(--accent)" />
       <circle cx={cx} cy={cy} r="4" fill="var(--canvas)" />
       <title>

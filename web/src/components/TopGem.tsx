@@ -5,6 +5,20 @@ import { SourceIcon } from "./SourceIcon";
 export function TopGem({ snapshot }: { snapshot: Snapshot | null }) {
   const gem = snapshot?.hidden_gems?.[0];
 
+  // Compute the "caught early" lead time - how long after publish we
+  // ingested it. This is the system's reason-for-being and deserves visual
+  // prominence. Returns null if we don't have both timestamps.
+  const leadTime = (() => {
+    if (!gem?.published_at || !gem?.ingested_at) return null;
+    const pub = new Date(gem.published_at).getTime();
+    const ing = new Date(gem.ingested_at).getTime();
+    if (Number.isNaN(pub) || Number.isNaN(ing) || ing <= pub) return null;
+    const mins = Math.round((ing - pub) / 60000);
+    if (mins < 60) return `${mins} min`;
+    if (mins < 60 * 48) return `${Math.round(mins / 60)} h`;
+    return `${Math.round(mins / (60 * 24))} d`;
+  })();
+
   return (
     <section
       id="top-gem"
@@ -55,12 +69,43 @@ export function TopGem({ snapshot }: { snapshot: Snapshot | null }) {
           </h2>
 
           {gem.body_excerpt && (
-            <p className="t-body line-clamp-2" style={{ color: "var(--ink-muted)" }}>
+            <p className="t-body line-clamp-2 mb-5" style={{ color: "var(--ink-muted)" }}>
               {gem.body_excerpt}
             </p>
           )}
 
-          <div className="mt-6 flex items-center gap-4 t-supporting">
+          {leadTime && (
+            <div
+              className="inline-flex items-center gap-3 rounded-md px-3 py-2 mb-5"
+              style={{
+                background: "var(--accent-soft)",
+                border: "1px solid rgba(89,212,153,0.3)",
+              }}
+            >
+              <span
+                className="inline-block size-1.5 rounded-full"
+                style={{
+                  background: "var(--accent)",
+                  boxShadow: "0 0 8px var(--accent)",
+                }}
+                aria-hidden
+              />
+              <span
+                className="t-mono"
+                style={{ color: "var(--accent)", fontSize: "13px", fontWeight: 600 }}
+              >
+                Detected {leadTime} after publish
+              </span>
+              <span
+                className="t-supporting"
+                style={{ color: "var(--ink-tertiary)", fontSize: "12px" }}
+              >
+                before mainstream feeds noticed
+              </span>
+            </div>
+          )}
+
+          <div className="flex flex-wrap items-center gap-4 t-supporting">
             <ScoreCell label="Niche" value={gem.niche_score} />
             <ScoreCell label="Velocity" value={gem.velocity_score} />
             <ScoreCell label="Freshness" value={gem.freshness_score} />
