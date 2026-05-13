@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generated_at": "2026-05-13T14:06:42.750693+00:00",
+  "generated_at": "2026-05-13T14:16:13.590080+00:00",
   "meta": {
     "total_events": 495,
     "counts_by_source": {
@@ -2069,6 +2069,223 @@
       }
     }
   ],
-  "tomorrows_videos": [],
+  "tomorrows_videos": [
+    {
+      "id": "gh_trending:ruvnet/ruflo:2026-05-12",
+      "source": "github_trending",
+      "source_subtype": "weekly",
+      "url": "https://github.com/ruvnet/ruflo",
+      "title": "ruvnet/ruflo",
+      "body_excerpt": "\ud83c\udf0a The leading agent orchestration platform for Claude. Deploy intelligent multi-agent swarms, coordinate autonomous workflows, and build conversational AI systems. Features enterprise-grade architecture, self-learning swarm intelligence, RAG integration, and native Claude Code / Codex Integration",
+      "author": "ruvnet",
+      "ingested_at": "2026-05-12T17:18:43.161454+00:00",
+      "published_at": "2026-05-12T17:18:43.161456+00:00",
+      "niche_score": 9.0,
+      "velocity_score": 10.0,
+      "composite_score": 84.0,
+      "cluster_id": "cluster_a0c8370d1b",
+      "dedupe_status": null,
+      "status": "scored",
+      "primary_title": "Claude Code + Ruflo = FREE agent swarms",
+      "alt_titles": [
+        "How to deploy AUTONOMOUS Claude agents",
+        "Ruflo + Claude = UNSTOPPABLE agent workflows",
+        "How to build agent swarms for FREE with Ruflo",
+        "The NEW way to orchestrate Claude Code agents"
+      ],
+      "hook_first_2_sentences": "You can now deploy self-learning multi-agent swarms directly with Claude. Right now you are wasting entire weekends trying to stitch together broken Python scripts just to get two AI agents to communicate.",
+      "outline_30s": [
+        "You can now deploy self-learning multi-agent swarms directly with Claude.",
+        "Right now you are wasting entire weekends trying to stitch together broken Python scripts just to get two AI agents to communicate.",
+        "Ruflo is a new orchestration platform that coordinates these autonomous workflows natively with Claude Code.",
+        "The best part is you do not need any coding experience to set this up.",
+        "This means you can build enterprise-grade conversational systems that handle your client onboarding and support automatically.",
+        "I will show you exactly how to install this locally and get your first swarm running today."
+      ],
+      "angles_generated_at": "2026-05-13T14:07:43.755892+00:00",
+      "engagement": {
+        "owner": "ruvnet",
+        "name": "ruflo",
+        "description": "\ud83c\udf0a The leading agent orchestration platform for Claude. Deploy intelligent multi-agent swarms, coordinate autonomous workflows, and build conversational AI systems. Features enterprise-grade architecture, self-learning swarm intelligence, RAG integration, and native Claude Code / Codex Integration",
+        "language": "TypeScript",
+        "stars_period": 8660,
+        "stars_total": 0,
+        "window": "weekly",
+        "snapshot_date": "2026-05-12"
+      }
+    },
+    {
+      "id": "gh_trending:InsForge/InsForge:2026-05-12",
+      "source": "github_trending",
+      "source_subtype": "weekly",
+      "url": "https://github.com/InsForge/InsForge",
+      "title": "InsForge/InsForge",
+      "body_excerpt": "The all-in-one, open-source backend platform for agentic coding. InsForge gives your coding agent database, auth, storage, compute, hosting, and AI gateway to ship full-stack apps end-to-end.",
+      "author": "InsForge",
+      "ingested_at": "2026-05-12T17:18:43.161636+00:00",
+      "published_at": "2026-05-12T17:18:43.161639+00:00",
+      "niche_score": 9.0,
+      "velocity_score": 10.0,
+      "composite_score": 84.0,
+      "cluster_id": "cluster_83853d3464",
+      "dedupe_status": null,
+      "status": "scored",
+      "primary_title": "InsForge + Claude Code = FREE end-to-end app generation",
+      "alt_titles": [
+        "How to ship full-stack apps FAST with InsForge",
+        "InsForge + Cursor = COMPLETE backend for AI agents",
+        "The open-source backend built specifically for vibe coding",
+        "Stop wiring databases manually - use InsForge for agents"
+      ],
+      "hook_first_2_sentences": "InsForge is a brand new open-source platform that gives your AI agents the database, auth, and hosting they need to ship full-stack apps end-to-end. You are losing entire weekends trying to wire up infrastructure manually when your agent should just do it for you.",
+      "outline_30s": [
+        "InsForge is a brand new open-source platform that gives your AI agents the database, auth, and hosting they need to ship full-stack apps end-to-end.",
+        "You are losing entire weekends trying to wire up infrastructure manually when your agent should just do it for you.",
+        "I will show you exactly how to connect InsForge to Claude Code so it handles the entire deployment process, even if you have zero cloud architecture experience.",
+        "This completely removes the bottleneck between vibe coding a frontend and actually launching a profitable software product to real users.",
+        "We will run this entirely locally to ensure you avoid vendor lock-in and keep your running costs at absolutely zero.",
+        "Open up your terminal and follow along with my exact setup commands."
+      ],
+      "angles_generated_at": "2026-05-13T14:08:46.506970+00:00",
+      "engagement": {
+        "owner": "InsForge",
+        "name": "InsForge",
+        "description": "The all-in-one, open-source backend platform for agentic coding. InsForge gives your coding agent database, auth, storage, compute, hosting, and AI gateway to ship full-stack apps end-to-end.",
+        "language": "TypeScript",
+        "stars_period": 1493,
+        "stars_total": 0,
+        "window": "weekly",
+        "snapshot_date": "2026-05-12"
+      }
+    },
+    {
+      "id": "gh_release:anthropics/claude-code:v2.1.139",
+      "source": "github_release",
+      "source_subtype": "v2.1.139",
+      "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.139",
+      "title": "anthropics/claude-code v2.1.139: v2.1.139",
+      "body_excerpt": "## What's changed\n\n- Added agent view (Research Preview): a single list of every Claude Code session \u2014 running, blocked on you, or done. Run `claude agents` to get started. See https://code.claude.com/docs/en/agent-view\n- Added `/goal` command: set a completion condition and Claude keeps working across turns until it's met. Works in interactive, `-p`, and Remote Control. Shows live elapsed/turns/tokens as an overlay panel\n- Added `/scroll-speed` command to tune mouse wheel scroll speed with a live preview\n- Added `claude plugin details <name>` to show a plugin's component inventory and projected per-session token cost\n- Added transcript view navigation: `?` for keyboard shortcuts, `{`/`}` to jump between user prompts, `v` to toggle shortcut panel\n- Added hook `args: string[]` field (exec form) that spawns the command directly without a shell, so path placeholders never need quoting\n- Added hook `continueOnBlock` config option for `PostToolUse` \u2014 set to `true` to feed the hook's rejection reason back to Claude and continue the turn\n- MCP stdio servers now receive `CLAUDE_PROJECT_DIR` in their environment, matching hooks. Plugin configs can reference `${CLAUDE_PROJECT_DIR}` in commands\n- Compaction prompt now asks the model to preserve sensitive user instructions\n- `/mcp` Reconnect now picks up `.mcp.json` edits without a restart, and shows the HTTP status and URL when reconnecting fails\n- `/context all` per-skill token estimates now account for the model's tokenizer and show rounded values\n- `claude plugin install <name>@<marketplace>` now auto-refreshes the marketplace and retries before reporting a plugin as not found\n- `/plugin` installed-plugin details now show hook event names and MCP server names cleanly\n- `/context` now shows the providing plugin's name for plugin-sourced skills\n- Remote MCP server reconnect retry on transient failures is now enabled for all users\n- API requests from subagents now carry `x-claude-code-agent-id` / `x-claude-code-parent-agent-id",
+      "author": "anthropics/claude-code",
+      "ingested_at": "2026-05-12T17:14:08.504042+00:00",
+      "published_at": "2026-05-11T18:43:42Z",
+      "niche_score": 10.0,
+      "velocity_score": 8.0,
+      "composite_score": 82.0,
+      "cluster_id": "cluster_cc52469325",
+      "dedupe_status": null,
+      "status": "scored",
+      "primary_title": "Claude Code + /goal = FREE Autonomous Agent Fleet Management",
+      "alt_titles": [
+        "How to build a TRUE autonomous agent fleet with Claude Code",
+        "Claude Code just killed expensive agent frameworks forever",
+        "Claude Code + Agent View = $0 Autonomous Business Workflows",
+        "How to automate your business with the NEW Claude Code update"
+      ],
+      "hook_first_2_sentences": "You can now turn Claude Code into a fully autonomous fleet of workers running directly in your terminal, even if you have zero coding experience. You are probably tired of losing your entire weekend trying to glue together broken agent frameworks that drain your wallet in API costs.",
+      "outline_30s": [
+        "You can now turn Claude Code into a fully autonomous fleet of workers running directly in your terminal, even if you have zero coding experience.",
+        "You are probably tired of losing your entire weekend trying to glue together broken agent frameworks that drain your wallet in API costs.",
+        "The newest Claude Code update completely removes the need for complex multi-agent setups by introducing a native agent view and continuous goal execution.",
+        "I will show you how to use the new slash goal command to set a target and watch Claude work autonomously across multiple turns until the job is finished.",
+        "You need to check the new plugin token cost predictor before running this, because leaving it unattended with a vague prompt will burn through your Anthropic balance.",
+        "Open up your terminal and run the update command while I walk you through the exact setup."
+      ],
+      "angles_generated_at": "2026-05-13T14:10:10.181453+00:00",
+      "engagement": {
+        "is_prerelease": false,
+        "is_draft": false,
+        "asset_count": 10,
+        "priority": "high"
+      }
+    },
+    {
+      "id": "gh_release:langchain-ai/langgraph:1.2.0",
+      "source": "github_release",
+      "source_subtype": "langgraph==1.2.0",
+      "url": "https://github.com/langchain-ai/langgraph/releases/tag/1.2.0",
+      "title": "langchain-ai/langgraph 1.2.0: langgraph==1.2.0",
+      "body_excerpt": "Changes since 1.2.0a7\n\n* release: bump alpha packages to official versions (#7775)\n* feat(langgraph): durable error-handler resume across host crashes (#7773)\n* feat(langgraph): add set_node_defaults() to StateGraph (#7747)\n* chore(deps): bump urllib3 from 2.6.3 to 2.7.0 in /libs/langgraph (#7766)\n* chore(deps): bump mistune from 3.2.0 to 3.2.1 in /libs/langgraph (#7733)\n* chore(langgraph): bump langchain-core to 1.4.0 (#7767)\n* feat(checkpoint): force delta channel snapshot after max supersteps since last snapshot (#7746)\n* test(langgraph): de-flake heartbeat progress test (#7735)\n* chore(langgraph): re-implement exit mode for delta channel (#7730)\n* chore(deps): bump ty from 0.0.23 to 0.0.33 in /libs/sdk-py (#7666)\n* docs(checkpoint): mark DeltaChannel and delta-history APIs as beta (#7732)\n* chore(deps): bump jupyter-server from 2.17.0 to 2.18.0 in /libs/langgraph (#7713)\n* feat(checkpoint-sqlite): override get_delta_channel_history with streaming walk (#7702)\n* chore: \"chore: minor clean up around checkpoint and delta channel\" (#7706)\n* chore: minor clean up around checkpoint and delta channel (#7705)",
+      "author": "langchain-ai/langgraph",
+      "ingested_at": "2026-05-12T17:14:09.522257+00:00",
+      "published_at": "2026-05-12T03:46:55Z",
+      "niche_score": 9.0,
+      "velocity_score": 8.0,
+      "composite_score": 80.0,
+      "cluster_id": "cluster_7d00e73adf",
+      "dedupe_status": null,
+      "status": "scored",
+      "primary_title": "How to build CRASH-PROOF AI agents with the new LangGraph 1.2",
+      "alt_titles": [
+        "LangGraph 1.2 = FREE fault-tolerant AI agents for business",
+        "Stop losing API credits to broken AI agents with LangGraph",
+        "The new LangGraph 1.2 makes your AI workflows UNBREAKABLE",
+        "How to fix failing AI agents using LangGraph 1.2 checkpoints"
+      ],
+      "hook_first_2_sentences": "LangGraph 1.2 just made it possible to build AI agents that survive complete server crashes and resume exactly where they left off. You are bleeding API credits every time a long-running workflow fails halfway through and forces you to start from scratch.",
+      "outline_30s": [
+        "LangGraph 1.2 just made it possible to build AI agents that survive complete server crashes and resume exactly where they left off.",
+        "You are bleeding API credits every time a long-running workflow fails halfway through and forces you to start from scratch.",
+        "I will show you how the new durable error handler pauses a broken state and resumes it automatically.",
+        "This means you can finally trust AI to handle multi-step client operations without babysitting the terminal.",
+        "You do not need to be a senior DevOps engineer to set up these fault-tolerant agentic workflows.",
+        "Here is the exact code to upgrade your existing agents right now."
+      ],
+      "angles_generated_at": "2026-05-13T14:11:23.824320+00:00",
+      "engagement": {
+        "is_prerelease": false,
+        "is_draft": false,
+        "asset_count": 0,
+        "priority": "high"
+      }
+    },
+    {
+      "id": "youtube_upload:7zxIeRWasbc",
+      "source": "youtube_upload",
+      "source_subtype": "@chase-h-ai",
+      "url": "https://www.youtube.com/watch?v=7zxIeRWasbc",
+      "title": "Claude Code Just Got a Dashboard",
+      "body_excerpt": "\u26a1Master Claude Code & Codex\u26a1\nhttps://www.skool.com/chase-ai\n\n\ud83d\udd25FREE community\ud83d\udd25 \nhttps://www.skool.com/chase-ai-community\n\n\ud83d\udcbb Need custom work? Book a consult \ud83d\udcbb\nhttps://chaseai.io\n\nRESOURCES FROM THIS VIDEO:\n\u27a1\ufe0f Master Claude Code & Codex: https://www.skool.com/chase-ai\n\u27a1\ufe0f My Website: https://www.chaseai.io\n\u27a1\ufe0f Article: https://claude.com/blog/agent-view-in-claude-code\n\n#claudecode",
+      "author": "Chase AI",
+      "ingested_at": "2026-05-12T17:15:55.322883+00:00",
+      "published_at": "2026-05-11T22:29:29Z",
+      "niche_score": 9.0,
+      "velocity_score": 10.0,
+      "composite_score": 80.0,
+      "cluster_id": "cluster_0164190856",
+      "dedupe_status": null,
+      "status": "scored",
+      "primary_title": "Claude Code + Agent View = FREE Visual Agent Tracking System",
+      "alt_titles": [
+        "How to track Claude Code agents with the NEW visual dashboard",
+        "Stop losing API credits with the FREE Claude Code Agent View",
+        "The Claude Code visual dashboard fixes blind agent workflows",
+        "Anthropic just fixed Claude Code with a NEW visual dashboard"
+      ],
+      "hook_first_2_sentences": "Anthropic just added a visual dashboard to Claude Code so you can track your AI agents in real time. This completely ends the anxiety of staring at a terminal window while an agent silently burns through your API credits.",
+      "outline_30s": [
+        "Anthropic just added a visual dashboard to Claude Code so you can track your AI agents in real time.",
+        "This completely ends the anxiety of staring at a terminal window while an agent silently burns through your API credits.",
+        "I will show you how to enable Agent View to watch exactly which files Claude reads and edits.",
+        "You do not need to be a command line expert to understand what your autonomous agents are doing anymore.",
+        "This visual feedback loop lets you catch mistakes early and build complex features in half the time.",
+        "Open your terminal and run this specific update command to get started."
+      ],
+      "angles_generated_at": "2026-05-13T14:12:36.737897+00:00",
+      "engagement": {
+        "views": 38784,
+        "likes": 856,
+        "comments": 61,
+        "duration_sec": 205,
+        "age_hours": 18.8,
+        "views_per_hour": 2065.8,
+        "channel_median_views": 11856,
+        "outlier_ratio": 3.271,
+        "channel_id": "UCoy6cTJ7Tg0dqS-DI-_REsA",
+        "channel_title": "Chase AI",
+        "channel_handle": "@chase-h-ai",
+        "thumbnail_url": "https://i.ytimg.com/vi/7zxIeRWasbc/maxresdefault.jpg"
+      }
+    }
+  ],
   "velocity_samples": []
 }
