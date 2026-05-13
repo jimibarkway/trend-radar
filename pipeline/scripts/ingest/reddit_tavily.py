@@ -66,6 +66,47 @@ def url_subreddit(url: str) -> str | None:
     return m.group(1) if m else None
 
 
+def post_id_from_url(url: str) -> str | None:
+    """Extract the Reddit post id from a post URL."""
+    import re
+    m = re.search(r"/comments/([a-z0-9]+)/", url)
+    return m.group(1) if m else None
+
+
+REDDIT_UA = "trend-radar/0.2 (+https://github.com/jimibarkway/trend-radar)"
+
+
+def fetch_reddit_engagement(post_url: str) -> dict | None:
+    """Hit Reddit's public JSON endpoint for the post to get real ups +
+    num_comments + created_utc. Returns None on failure (404, rate limit, etc).
+    Reddit rate limits unauth'd at ~60/min - we pace with a small sleep."""
+    pid = post_id_from_url(post_url)
+    if not pid:
+        return None
+    api = f"https://www.reddit.com/comments/{pid}.json"
+    req = urllib.request.Request(api, headers={"User-Agent": REDDIT_UA, "Accept": "application/json"})
+    try:
+        with urllib.request.urlopen(req, timeout=15) as r:
+            data = json.loads(r.read().decode())
+        # First listing is the post itself
+        post = data[0]["data"]["children"][0]["data"]
+        return {
+            "ups": int(post.get("ups", 0)),
+            "downs": int(post.get("downs", 0)),
+            "score": int(post.get("score", 0)),
+            "num_comments": int(post.get("num_comments", 0)),
+            "upvote_ratio": float(post.get("upvote_ratio", 0)),
+            "created_utc": int(post.get("created_utc", 0)),
+        }
+    except urllib.error.HTTPError as e:
+        if e.code == 429:
+            import time
+            time.sleep(5)
+        return None
+    except Exception:
+        return None
+
+
 def insert_post(con: sqlite3.Connection, post: dict, sub: str, priority: str,
                 allowed_subs: set[str]) -> bool:
     url = post.get("url", "")
@@ -85,20 +126,30 @@ def insert_post(con: sqlite3.Connection, post: dict, sub: str, priority: str,
     title = post.get("title", "")
     body = post.get("content", "") or ""
     score = post.get("score", 0)
-    engagement = {
+    engagement: dict = {
         "subreddit": actual_sub,            # the ACTUAL sub the post is in
         "searched_sub": sub,                 # the sub we were querying
         "priority": priority,
         "tavily_relevance": score,
     }
+    # Enrich with real Reddit engagement (ups, num_comments, created_utc).
+    # This is what fixes the "Tavily relevance != engagement" bug long-term.
+    real = fetch_reddit_engagement(url)
+    pub_at = None
+    if real:
+        engagement.update(real)
+        if real.get("created_utc"):
+            pub_at = datetime.fromtimestamp(
+                real["created_utc"], tz=timezone.utc
+            ).isoformat()
     con.execute(
         """INSERT INTO raw_events
              (id, source, source_subtype, url, title, body_excerpt, author,
               ingested_at, published_at, engagement_raw)
            VALUES (?, 'reddit', ?, ?, ?, ?, ?, ?, ?, ?)""",
         (
-            eid, sub, url, title[:300], body[:2000], f"r/{sub}",
-            datetime.now(timezone.utc).isoformat(), None,
+            eid, actual_sub, url, title[:300], body[:2000], f"r/{actual_sub}",
+            datetime.now(timezone.utc).isoformat(), pub_at,
             json.dumps(engagement),
         ),
     )

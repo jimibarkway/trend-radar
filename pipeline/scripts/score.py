@@ -128,10 +128,15 @@ def velocity_score(event: dict) -> tuple[float, str, float]:
         v = min(10, math.log1p(raw) * 1.2)
         return (v, "likes_plus_2x_replies", float(raw))
     if source == "reddit":
-        # Tavily 'relevance' is keyword match strength, NOT engagement. We
-        # need real upvote / comment data here. Without it, score 0 - this
-        # cap means a Reddit item only ranks via niche/freshness, and a
-        # post with no engagement evidence cannot win the feed.
+        # We enrich each Reddit ingest with the real ups + num_comments from
+        # Reddit's public JSON endpoint. If that worked, score on actual
+        # engagement. If not, fall through to 0.
+        ups = engagement.get("ups")
+        nc = engagement.get("num_comments")
+        if ups is not None or nc is not None:
+            raw = (ups or 0) + (nc or 0) * 2  # comments weighted 2x
+            v = min(10, math.log1p(raw) * 1.4)
+            return (v, "ups_plus_2x_comments", float(raw))
         return (0.0, "no_engagement_data", 0.0)
     return (3.0, "default", 0.0)
 
