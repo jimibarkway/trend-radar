@@ -7,7 +7,6 @@
     {"repo": "modelcontextprotocol/modelcontextprotocol", "priority": "high", "note": "MCP spec"},
     {"repo": "modelcontextprotocol/python-sdk", "priority": "high", "note": "MCP python SDK"},
     {"repo": "modelcontextprotocol/typescript-sdk", "priority": "high", "note": "MCP TS SDK"},
-    {"repo": "n8n-io/n8n", "priority": "high", "note": "n8n core"},
     {"repo": "langchain-ai/langchain", "priority": "med", "note": "LangChain"},
     {"repo": "langchain-ai/langgraph", "priority": "high", "note": "LangGraph"},
     {"repo": "openai/openai-python", "priority": "med", "note": "OpenAI SDK"},

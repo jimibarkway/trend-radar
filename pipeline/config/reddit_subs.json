@@ -5,7 +5,6 @@
     {"name": "AI_Agents", "priority": "high"},
     {"name": "ClaudeAI", "priority": "high"},
     {"name": "ClaudeCode", "priority": "high"},
-    {"name": "n8n", "priority": "high"},
     {"name": "ChatGPTCoding", "priority": "med"},
     {"name": "MachineLearning", "priority": "med"},
     {"name": "Automate", "priority": "med"},

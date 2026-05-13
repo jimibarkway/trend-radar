@@ -1,10 +1,10 @@
 {
   "version": 1,
-  "generated_at": "2026-05-13T17:24:11.198456+00:00",
+  "generated_at": "2026-05-13T17:34:51.418237+00:00",
   "meta": {
-    "total_events": 474,
+    "total_events": 472,
     "counts_by_source": {
-      "github_release": 17,
+      "github_release": 15,
       "github_trending": 27,
       "reddit": 14,
       "rss": 339,
