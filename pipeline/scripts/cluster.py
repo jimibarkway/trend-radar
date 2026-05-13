@@ -32,7 +32,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 from pipeline.lib.env import db_path, require_env
 
-EMBED_MODEL = "text-embedding-004"
+EMBED_MODEL = "gemini-embedding-2"
 EMBED_ENDPOINT = f"https://generativelanguage.googleapis.com/v1beta/models/{EMBED_MODEL}:embedContent"
 EMBED_SLEEP = 0.3  # ~200 RPM headroom
 

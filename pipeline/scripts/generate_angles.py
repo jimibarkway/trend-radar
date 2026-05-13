@@ -29,7 +29,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 from pipeline.lib.env import db_path, config_path, require_env
 
-DEFAULT_MODEL = "gemini-2.5-pro"
+DEFAULT_MODEL = "gemini-3-pro-preview"
 
 VOICE_RULES = """VOICE RULES (these are non-negotiable):
 
@@ -111,7 +111,7 @@ def ask_gemini(prompt: str, key: str, model: str, max_retries: int = 4) -> dict 
                 data=json.dumps(payload).encode(),
                 headers={"Content-Type": "application/json"},
             )
-            with urllib.request.urlopen(req, timeout=60) as r:
+            with urllib.request.urlopen(req, timeout=240) as r:
                 body = json.loads(r.read().decode())
             text = body["candidates"][0]["content"]["parts"][0]["text"]
             return json.loads(text)

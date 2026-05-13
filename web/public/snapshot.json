@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generated_at": "2026-05-13T12:38:04.254284+00:00",
+  "generated_at": "2026-05-13T14:06:42.750693+00:00",
   "meta": {
     "total_events": 495,
     "counts_by_source": {
@@ -36,7 +36,7 @@
       "niche_score": 9.0,
       "velocity_score": 10.0,
       "composite_score": 84.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_a0c8370d1b",
       "dedupe_status": null,
       "status": "scored",
       "engagement": {
@@ -63,7 +63,7 @@
       "niche_score": 9.0,
       "velocity_score": 10.0,
       "composite_score": 84.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_83853d3464",
       "dedupe_status": null,
       "status": "scored",
       "engagement": {
@@ -90,7 +90,7 @@
       "niche_score": 10.0,
       "velocity_score": 8.0,
       "composite_score": 82.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_cc52469325",
       "dedupe_status": null,
       "status": "scored",
       "engagement": {
@@ -113,7 +113,7 @@
       "niche_score": 9.0,
       "velocity_score": 8.0,
       "composite_score": 80.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_7d00e73adf",
       "dedupe_status": null,
       "status": "scored",
       "engagement": {
@@ -136,7 +136,7 @@
       "niche_score": 9.0,
       "velocity_score": 10.0,
       "composite_score": 80.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_0164190856",
       "dedupe_status": null,
       "status": "scored",
       "engagement": {
@@ -167,7 +167,7 @@
       "niche_score": 8.0,
       "velocity_score": 10.0,
       "composite_score": 78.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_aab33c8798",
       "dedupe_status": null,
       "status": "scored",
       "engagement": {
@@ -194,7 +194,7 @@
       "niche_score": 8.0,
       "velocity_score": 10.0,
       "composite_score": 78.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_2479757365",
       "dedupe_status": null,
       "status": "scored",
       "engagement": {
@@ -221,7 +221,7 @@
       "niche_score": 8.0,
       "velocity_score": 10.0,
       "composite_score": 78.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_7161889bb9",
       "dedupe_status": null,
       "status": "scored",
       "engagement": {
@@ -248,7 +248,7 @@
       "niche_score": 9.0,
       "velocity_score": 2.0,
       "composite_score": 76.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_77f6411a84",
       "dedupe_status": null,
       "status": "scored",
       "engagement": {
@@ -269,7 +269,7 @@
       "niche_score": 9.0,
       "velocity_score": 10.0,
       "composite_score": 76.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_0164190856",
       "dedupe_status": null,
       "status": "scored",
       "engagement": {
@@ -300,7 +300,7 @@
       "niche_score": 9.0,
       "velocity_score": 5.831130382474168,
       "composite_score": 75.7,
-      "cluster_id": null,
+      "cluster_id": "cluster_0164190856",
       "dedupe_status": null,
       "status": "scored",
       "engagement": {
@@ -331,7 +331,7 @@
       "niche_score": 8.0,
       "velocity_score": 10.0,
       "composite_score": 74.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_935c34914a",
       "dedupe_status": null,
       "status": "scored",
       "engagement": {
@@ -362,7 +362,7 @@
       "niche_score": 8.0,
       "velocity_score": 10.0,
       "composite_score": 74.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_0164190856",
       "dedupe_status": null,
       "status": "scored",
       "engagement": {
@@ -393,7 +393,7 @@
       "niche_score": 9.0,
       "velocity_score": 6.615276557470393,
       "composite_score": 73.2,
-      "cluster_id": null,
+      "cluster_id": "cluster_0164190856",
       "dedupe_status": null,
       "status": "scored",
       "engagement": {
@@ -424,7 +424,7 @@
       "niche_score": 7.0,
       "velocity_score": 10.0,
       "composite_score": 72.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_0a786173c1",
       "dedupe_status": null,
       "status": "scored",
       "engagement": {
@@ -451,7 +451,7 @@
       "niche_score": 7.0,
       "velocity_score": 10.0,
       "composite_score": 72.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_15826e3302",
       "dedupe_status": null,
       "status": "scored",
       "engagement": {
@@ -478,7 +478,7 @@
       "niche_score": 7.0,
       "velocity_score": 10.0,
       "composite_score": 72.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_36fed87798",
       "dedupe_status": null,
       "status": "scored",
       "engagement": {
@@ -505,7 +505,7 @@
       "niche_score": 7.0,
       "velocity_score": 10.0,
       "composite_score": 72.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_62ddc1a78f",
       "dedupe_status": null,
       "status": "scored",
       "engagement": {
@@ -532,7 +532,7 @@
       "niche_score": 7.0,
       "velocity_score": 10.0,
       "composite_score": 72.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_74d8d7d4c9",
       "dedupe_status": null,
       "status": "scored",
       "engagement": {
@@ -559,7 +559,7 @@
       "niche_score": 7.0,
       "velocity_score": 10.0,
       "composite_score": 72.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_7be323da43",
       "dedupe_status": null,
       "status": "scored",
       "engagement": {
@@ -586,7 +586,7 @@
       "niche_score": 7.0,
       "velocity_score": 10.0,
       "composite_score": 72.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_aa5313a3cd",
       "dedupe_status": null,
       "status": "scored",
       "engagement": {
@@ -613,7 +613,7 @@
       "niche_score": 9.0,
       "velocity_score": 5.713671253853951,
       "composite_score": 71.4,
-      "cluster_id": null,
+      "cluster_id": "cluster_0164190856",
       "dedupe_status": null,
       "status": "scored",
       "engagement": {
@@ -644,7 +644,7 @@
       "niche_score": 7.0,
       "velocity_score": 9.597892401802811,
       "composite_score": 71.2,
-      "cluster_id": null,
+      "cluster_id": "cluster_a7d4991085",
       "dedupe_status": null,
       "status": "scored",
       "engagement": {
@@ -671,7 +671,7 @@
       "niche_score": 9.0,
       "velocity_score": 7.165837318765703,
       "composite_score": 70.3,
-      "cluster_id": null,
+      "cluster_id": "cluster_2df7767e20",
       "dedupe_status": null,
       "status": "scored",
       "engagement": {
@@ -702,7 +702,7 @@
       "niche_score": 9.0,
       "velocity_score": 3.0,
       "composite_score": 70.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_2df7767e20",
       "dedupe_status": null,
       "status": "scored",
       "engagement": {
@@ -724,7 +724,7 @@
       "niche_score": 9.0,
       "velocity_score": 3.0,
       "composite_score": 70.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_0164190856",
       "dedupe_status": null,
       "status": "scored",
       "engagement": {
@@ -746,7 +746,7 @@
       "niche_score": 9.0,
       "velocity_score": 3.0,
       "composite_score": 70.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_0014f78afc",
       "dedupe_status": null,
       "status": "scored",
       "engagement": {
@@ -768,7 +768,7 @@
       "niche_score": 9.0,
       "velocity_score": 3.0,
       "composite_score": 70.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_0014f78afc",
       "dedupe_status": null,
       "status": "scored",
       "engagement": {
@@ -790,7 +790,7 @@
       "niche_score": 9.0,
       "velocity_score": 3.0,
       "composite_score": 70.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_0164190856",
       "dedupe_status": null,
       "status": "scored",
       "engagement": {
@@ -812,7 +812,7 @@
       "niche_score": 8.0,
       "velocity_score": 5.725844863071962,
       "composite_score": 69.5,
-      "cluster_id": null,
+      "cluster_id": "cluster_0164190856",
       "dedupe_status": null,
       "status": "scored",
       "engagement": {
@@ -843,7 +843,7 @@
       "niche_score": 9.0,
       "velocity_score": 4.493960945940722,
       "composite_score": 69.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_0ce5f3c156",
       "dedupe_status": null,
       "status": "scored",
       "engagement": {
@@ -874,7 +874,7 @@
       "niche_score": 7.0,
       "velocity_score": 8.386480470766285,
       "composite_score": 68.8,
-      "cluster_id": null,
+      "cluster_id": "cluster_36aec8c04d",
       "dedupe_status": null,
       "status": "scored",
       "engagement": {
@@ -901,7 +901,7 @@
       "niche_score": 9.0,
       "velocity_score": 6.113049078875125,
       "composite_score": 68.2,
-      "cluster_id": null,
+      "cluster_id": "cluster_0164190856",
       "dedupe_status": null,
       "status": "scored",
       "engagement": {
@@ -932,7 +932,7 @@
       "niche_score": 6.0,
       "velocity_score": 10.0,
       "composite_score": 66.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_e6064bfcdf",
       "dedupe_status": null,
       "status": "scored",
       "engagement": {
@@ -959,7 +959,7 @@
       "niche_score": 6.0,
       "velocity_score": 9.98316052555147,
       "composite_score": 66.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_1828bda3e7",
       "dedupe_status": null,
       "status": "scored",
       "engagement": {
@@ -986,7 +986,7 @@
       "niche_score": 7.0,
       "velocity_score": 6.297471563627348,
       "composite_score": 64.6,
-      "cluster_id": null,
+      "cluster_id": "cluster_08f4d74682",
       "dedupe_status": null,
       "status": "scored",
       "engagement": {
@@ -1017,7 +1017,7 @@
       "niche_score": 8.0,
       "velocity_score": 5.2766195586424605,
       "composite_score": 64.6,
-      "cluster_id": null,
+      "cluster_id": "cluster_0164190856",
       "dedupe_status": null,
       "status": "scored",
       "engagement": {
@@ -1048,7 +1048,7 @@
       "niche_score": 8.0,
       "velocity_score": 7.0,
       "composite_score": 64.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_35f9ea299a",
       "dedupe_status": null,
       "status": "scored",
       "engagement": {
@@ -1069,7 +1069,7 @@
       "niche_score": 8.0,
       "velocity_score": 3.0,
       "composite_score": 64.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_67d6f5aa5e",
       "dedupe_status": null,
       "status": "scored",
       "engagement": {
@@ -1091,7 +1091,7 @@
       "niche_score": 8.0,
       "velocity_score": 3.0,
       "composite_score": 64.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_67d6f5aa5e",
       "dedupe_status": null,
       "status": "scored",
       "engagement": {
@@ -1113,7 +1113,7 @@
       "niche_score": 8.0,
       "velocity_score": 3.0,
       "composite_score": 64.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_0164190856",
       "dedupe_status": null,
       "status": "scored",
       "engagement": {
@@ -1135,7 +1135,7 @@
       "niche_score": 8.0,
       "velocity_score": 3.0,
       "composite_score": 64.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_0014f78afc",
       "dedupe_status": null,
       "status": "scored",
       "engagement": {
@@ -1157,7 +1157,7 @@
       "niche_score": 8.0,
       "velocity_score": 3.0,
       "composite_score": 64.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_0014f78afc",
       "dedupe_status": null,
       "status": "scored",
       "engagement": {
@@ -1179,7 +1179,7 @@
       "niche_score": 8.0,
       "velocity_score": 3.0,
       "composite_score": 64.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_0014f78afc",
       "dedupe_status": null,
       "status": "scored",
       "engagement": {
@@ -1201,7 +1201,7 @@
       "niche_score": 8.0,
       "velocity_score": 3.0,
       "composite_score": 64.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_67d6f5aa5e",
       "dedupe_status": null,
       "status": "scored",
       "engagement": {
@@ -1223,7 +1223,7 @@
       "niche_score": 7.0,
       "velocity_score": 7.0,
       "composite_score": 62.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_15c745b986",
       "dedupe_status": null,
       "status": "scored",
       "engagement": {
@@ -1244,7 +1244,7 @@
       "niche_score": 7.0,
       "velocity_score": 7.0,
       "composite_score": 62.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_4eb42dadb3",
       "dedupe_status": null,
       "status": "scored",
       "engagement": {
@@ -1265,7 +1265,7 @@
       "niche_score": 7.0,
       "velocity_score": 7.0,
       "composite_score": 62.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_1d0093b285",
       "dedupe_status": null,
       "status": "scored",
       "engagement": {
@@ -1286,7 +1286,7 @@
       "niche_score": 8.0,
       "velocity_score": 2.0,
       "composite_score": 62.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_77f6411a84",
       "dedupe_status": null,
       "status": "scored",
       "engagement": {
@@ -1307,7 +1307,7 @@
       "niche_score": 7.0,
       "velocity_score": 7.0,
       "composite_score": 62.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_834fe67740",
       "dedupe_status": null,
       "status": "scored",
       "engagement": {
@@ -1316,7 +1316,181 @@
       }
     }
   ],
-  "top_clusters": [],
+  "top_clusters": [
+    {
+      "id": "cluster_0164190856",
+      "centroid_title": "Claude Code Just Got a Dashboard",
+      "member_count": 16,
+      "source_count": 3,
+      "sources": [
+        "reddit",
+        "rss",
+        "youtube_upload"
+      ],
+      "max_composite": 80.0,
+      "cluster_score": 226.66,
+      "first_seen": "2026-05-12T17:15:09.216593+00:00",
+      "last_seen": "2026-05-12T20:11:44.149807+00:00",
+      "computed_at": "2026-05-13T14:00:39.169293+00:00",
+      "members": [
+        {
+          "id": "youtube_upload:7zxIeRWasbc",
+          "source": "youtube_upload",
+          "title": "Claude Code Just Got a Dashboard",
+          "url": "https://www.youtube.com/watch?v=7zxIeRWasbc",
+          "composite_score": 80.0,
+          "published_at": "2026-05-11T22:29:29Z"
+        },
+        {
+          "id": "youtube_upload:MAuLQzcMrS0",
+          "source": "youtube_upload",
+          "title": "Claude Code Agentic OS\u2026 It self improves",
+          "url": "https://www.youtube.com/watch?v=MAuLQzcMrS0",
+          "composite_score": 76.0,
+          "published_at": "2026-05-10T14:54:56Z"
+        },
+        {
+          "id": "youtube_upload:J6tPNRc9m2Q",
+          "source": "youtube_upload",
+          "title": "Claude Code has a new UI (pair it with Claude OS)",
+          "url": "https://www.youtube.com/watch?v=J6tPNRc9m2Q",
+          "composite_score": 75.7,
+          "published_at": "2026-05-12T10:45:59Z"
+        },
+        {
+          "id": "youtube_upload:BZzmBRYC_4s",
+          "source": "youtube_upload",
+          "title": "Is HTML the New Markdown? (Claude Code)",
+          "url": "https://www.youtube.com/watch?v=BZzmBRYC_4s",
+          "composite_score": 74.0,
+          "published_at": "2026-05-11T11:51:31Z"
+        },
+        {
+          "id": "youtube_upload:ZAaxx3qyT8g",
+          "source": "youtube_upload",
+          "title": "Multi-Agent Building In Claude Code Somehow Got Easier",
+          "url": "https://www.youtube.com/watch?v=ZAaxx3qyT8g",
+          "composite_score": 73.2,
+          "published_at": "2026-05-12T01:06:06Z"
+        },
+        {
+          "id": "youtube_upload:yBcmIoA-vGs",
+          "source": "youtube_upload",
+          "title": "Engineers, DELETE the BASH Tool: Agentic Security For Pi Agent and Claude Code",
+          "url": "https://www.youtube.com/watch?v=yBcmIoA-vGs",
+          "composite_score": 71.4,
+          "published_at": "2026-05-11T13:00:34Z"
+        }
+      ]
+    },
+    {
+      "id": "cluster_2df7767e20",
+      "centroid_title": "Hermes Agent: Zero to Personal AI Assistant (1 Hour Course)",
+      "member_count": 3,
+      "source_count": 2,
+      "sources": [
+        "reddit",
+        "youtube_upload"
+      ],
+      "max_composite": 70.3,
+      "cluster_score": 97.46,
+      "first_seen": "2026-05-12T17:15:53.090838+00:00",
+      "last_seen": "2026-05-12T20:11:36.289292+00:00",
+      "computed_at": "2026-05-13T14:00:39.169549+00:00",
+      "members": [
+        {
+          "id": "youtube_upload:gb5TlGw6Uks",
+          "source": "youtube_upload",
+          "title": "Hermes Agent: Zero to Personal AI Assistant (1 Hour Course)",
+          "url": "https://www.youtube.com/watch?v=gb5TlGw6Uks",
+          "composite_score": 70.3,
+          "published_at": "2026-05-10T02:42:25Z"
+        },
+        {
+          "id": "reddit:9bca5550ce3b668ff636",
+          "source": "reddit",
+          "title": "New FREE Hermes AI Agent Update is INSANE! - Reddit",
+          "url": "https://www.reddit.com/r/AISEOInsider/comments/1s8ry56/new_free_hermes_ai_agent_update_is_insane/",
+          "composite_score": 70.0,
+          "published_at": null
+        },
+        {
+          "id": "youtube_upload:Gz_uZcnCDLs",
+          "source": "youtube_upload",
+          "title": "LIVE: Talking AI news (no Hermes use cases ignore the thumbnail)",
+          "url": "https://www.youtube.com/watch?v=Gz_uZcnCDLs",
+          "composite_score": 52.7,
+          "published_at": "2026-05-11T20:11:47Z"
+        }
+      ]
+    },
+    {
+      "id": "cluster_0ce5f3c156",
+      "centroid_title": "Building the App Store for Agentic Engineering",
+      "member_count": 2,
+      "source_count": 2,
+      "sources": [
+        "rss",
+        "youtube_upload"
+      ],
+      "max_composite": 69.0,
+      "cluster_score": 75.8,
+      "first_seen": "2026-05-12T17:15:57.333649+00:00",
+      "last_seen": "2026-05-12T19:28:18.284367+00:00",
+      "computed_at": "2026-05-13T14:00:39.169603+00:00",
+      "members": [
+        {
+          "id": "youtube_upload:4azVjKhqDzw",
+          "source": "youtube_upload",
+          "title": "Building the App Store for Agentic Engineering",
+          "url": "https://www.youtube.com/watch?v=4azVjKhqDzw",
+          "composite_score": 69.0,
+          "published_at": "2026-05-12T04:02:35Z"
+        },
+        {
+          "id": "rss:arxiv_cs.ai:efc14a8d0da36c1e",
+          "source": "rss",
+          "title": "Human-Inspired Memory Architecture for LLM Agents",
+          "url": "https://arxiv.org/abs/2605.08538",
+          "composite_score": 52.0,
+          "published_at": "2026-05-12T04:00:00+00:00"
+        }
+      ]
+    },
+    {
+      "id": "cluster_37eb250c74",
+      "centroid_title": "Codex CLI Tutorial: Build an AI Image Studio from Scratch",
+      "member_count": 2,
+      "source_count": 2,
+      "sources": [
+        "rss",
+        "youtube_upload"
+      ],
+      "max_composite": 49.0,
+      "cluster_score": 53.83,
+      "first_seen": "2026-05-12T17:15:07.728787+00:00",
+      "last_seen": "2026-05-12T17:15:59.624426+00:00",
+      "computed_at": "2026-05-13T14:00:39.169986+00:00",
+      "members": [
+        {
+          "id": "youtube_upload:prLO7NGU4f0",
+          "source": "youtube_upload",
+          "title": "Codex CLI Tutorial: Build an AI Image Studio from Scratch",
+          "url": "https://www.youtube.com/watch?v=prLO7NGU4f0",
+          "composite_score": 49.0,
+          "published_at": "2026-05-11T11:17:21Z"
+        },
+        {
+          "id": "rss:github_blog:78613f7410da8b1b",
+          "source": "rss",
+          "title": "Dungeons & Desktops: Building a procedurally generated roguelike with GitHub Copilot CLI",
+          "url": "https://github.blog/ai-and-ml/github-copilot/dungeons-desktops-building-a-procedurally-generated-roguelike-with-github-copilot-cli/",
+          "composite_score": 44.0,
+          "published_at": "2026-05-12T15:00:00+00:00"
+        }
+      ]
+    }
+  ],
   "hidden_gems": [
     {
       "id": "gh_trending:ruvnet/ruflo:2026-05-12",
@@ -1331,7 +1505,7 @@
       "niche_score": 9.0,
       "velocity_score": 10.0,
       "composite_score": 84.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_a0c8370d1b",
       "dedupe_status": null,
       "status": "scored",
       "gem_reason": "small_repo",
@@ -1359,7 +1533,7 @@
       "niche_score": 9.0,
       "velocity_score": 10.0,
       "composite_score": 84.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_83853d3464",
       "dedupe_status": null,
       "status": "scored",
       "gem_reason": "small_repo",
@@ -1387,7 +1561,7 @@
       "niche_score": 10.0,
       "velocity_score": 8.0,
       "composite_score": 82.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_cc52469325",
       "dedupe_status": null,
       "status": "scored",
       "gem_reason": "fresh_fast",
@@ -1411,7 +1585,7 @@
       "niche_score": 9.0,
       "velocity_score": 10.0,
       "composite_score": 80.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_0164190856",
       "dedupe_status": null,
       "status": "scored",
       "gem_reason": "small_channel",
@@ -1443,7 +1617,7 @@
       "niche_score": 9.0,
       "velocity_score": 8.0,
       "composite_score": 80.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_7d00e73adf",
       "dedupe_status": null,
       "status": "scored",
       "gem_reason": "fresh_fast",
@@ -1467,7 +1641,7 @@
       "niche_score": 8.0,
       "velocity_score": 10.0,
       "composite_score": 78.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_aab33c8798",
       "dedupe_status": null,
       "status": "scored",
       "gem_reason": "small_repo",
@@ -1495,7 +1669,7 @@
       "niche_score": 8.0,
       "velocity_score": 10.0,
       "composite_score": 78.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_2479757365",
       "dedupe_status": null,
       "status": "scored",
       "gem_reason": "small_repo",
@@ -1523,7 +1697,7 @@
       "niche_score": 8.0,
       "velocity_score": 10.0,
       "composite_score": 78.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_7161889bb9",
       "dedupe_status": null,
       "status": "scored",
       "gem_reason": "small_repo",
@@ -1551,7 +1725,7 @@
       "niche_score": 9.0,
       "velocity_score": 10.0,
       "composite_score": 76.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_0164190856",
       "dedupe_status": null,
       "status": "scored",
       "gem_reason": "small_channel",
@@ -1583,7 +1757,7 @@
       "niche_score": 9.0,
       "velocity_score": 5.831130382474168,
       "composite_score": 75.7,
-      "cluster_id": null,
+      "cluster_id": "cluster_0164190856",
       "dedupe_status": null,
       "status": "scored",
       "gem_reason": "small_channel",
@@ -1615,7 +1789,7 @@
       "niche_score": 8.0,
       "velocity_score": 10.0,
       "composite_score": 74.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_935c34914a",
       "dedupe_status": null,
       "status": "scored",
       "gem_reason": "small_channel",
@@ -1647,7 +1821,7 @@
       "niche_score": 8.0,
       "velocity_score": 10.0,
       "composite_score": 74.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_0164190856",
       "dedupe_status": null,
       "status": "scored",
       "gem_reason": "small_channel",
@@ -1679,7 +1853,7 @@
       "niche_score": 7.0,
       "velocity_score": 10.0,
       "composite_score": 72.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_0a786173c1",
       "dedupe_status": null,
       "status": "scored",
       "gem_reason": "small_repo",
@@ -1707,7 +1881,7 @@
       "niche_score": 7.0,
       "velocity_score": 10.0,
       "composite_score": 72.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_15826e3302",
       "dedupe_status": null,
       "status": "scored",
       "gem_reason": "small_repo",
@@ -1735,7 +1909,7 @@
       "niche_score": 7.0,
       "velocity_score": 10.0,
       "composite_score": 72.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_36fed87798",
       "dedupe_status": null,
       "status": "scored",
       "gem_reason": "small_repo",
@@ -1763,7 +1937,7 @@
       "niche_score": 7.0,
       "velocity_score": 10.0,
       "composite_score": 72.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_62ddc1a78f",
       "dedupe_status": null,
       "status": "scored",
       "gem_reason": "small_repo",
@@ -1791,7 +1965,7 @@
       "niche_score": 7.0,
       "velocity_score": 10.0,
       "composite_score": 72.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_74d8d7d4c9",
       "dedupe_status": null,
       "status": "scored",
       "gem_reason": "small_repo",
@@ -1819,7 +1993,7 @@
       "niche_score": 7.0,
       "velocity_score": 10.0,
       "composite_score": 72.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_7be323da43",
       "dedupe_status": null,
       "status": "scored",
       "gem_reason": "small_repo",
@@ -1847,7 +2021,7 @@
       "niche_score": 7.0,
       "velocity_score": 10.0,
       "composite_score": 72.0,
-      "cluster_id": null,
+      "cluster_id": "cluster_aa5313a3cd",
       "dedupe_status": null,
       "status": "scored",
       "gem_reason": "small_repo",
@@ -1875,7 +2049,7 @@
       "niche_score": 9.0,
       "velocity_score": 5.713671253853951,
       "composite_score": 71.4,
-      "cluster_id": null,
+      "cluster_id": "cluster_0164190856",
       "dedupe_status": null,
       "status": "scored",
       "gem_reason": "small_channel",
