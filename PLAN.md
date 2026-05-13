@@ -11,7 +11,7 @@
 
 | Decision | Value |
 |---|---|
-| Snapshot transport | VPS public endpoint `trend-radar-api.jimibarkway.com` (via Caddy reverse-proxy) |
+| Snapshot transport | **Vercel Blob** (VPS posts hourly, dashboard reads edge-cached). VPS stays private, no inbound traffic. |
 | Dashboard domain | `trendradar.jimibarkway.com` (Vercel custom domain) |
 | Tool branding | "Trend Radar" as product, Jimi Barkway as author |
 | Accent palette | **NO purple.** Locked to whatever the 4 design repos suggest. Recommend Option A (Linear + radar-green) — pending Jimi sign-off |
@@ -42,17 +42,19 @@ Creative wow-moment: section 5 "Tomorrow's Videos" panel. Most Creative prize in
 - [x] Extract design tokens to `docs/design-tokens.md` (3 options + recommendation)
 - [x] Write `PLAN.md` (this file)
 - [x] Query `events.db` for real caught-early example (Voker confirmed)
-- [ ] **Awaiting Jimi sign-off on Option A vs B vs C from `docs/design-tokens.md`**
-- [ ] Once approved: scaffold Next.js 15 + Tailwind + shadcn in `web/`
-- [ ] Sanitised `.env.example`, `.gitignore`, MIT `LICENSE`
-- [ ] `README.md` skeleton (sections only, copy comes day 12)
+- [x] **Option A approved by Jimi** (Linear + radar-green #59d499, no purple)
+- [x] Scaffold Next.js 16 + Tailwind v4 in `web/` (turbopack, App Router, src-dir)
+- [x] Apply Option A tokens to `globals.css` + 7-section page shell + Inter/Geist Mono fonts
+- [x] `.env.example`, `LICENSE` (MIT), `README.md` skeleton
+- [x] `next build` passes clean
 
 **Day 2:**
-- [ ] Stand up Caddy reverse-proxy on VPS for `trend-radar-api.jimibarkway.com`
-- [ ] Write `pipeline/scripts/export_snapshot.py` — reads SQLite, writes `snapshot.json` to `/var/www/trend-radar-api/snapshot.json`
-- [ ] Cron: hourly snapshot generation
-- [ ] Test snapshot accessible at the public URL with CORS for Vercel origin
-- [ ] Sanitised `pipeline/` mirror of `/root/trend-radar/` — strip any creds/Skool/Notion/Apify refs, audit every file
+- [ ] Create Vercel Blob store; capture `BLOB_READ_WRITE_TOKEN`
+- [ ] Write `pipeline/scripts/export_snapshot.py` - reads SQLite, posts `snapshot.json` to Vercel Blob
+- [ ] Cron: hourly snapshot upload from VPS
+- [ ] `web/src/lib/snapshot.ts` - server-side fetch with revalidate caching
+- [ ] Sanitised `pipeline/` mirror of `/root/trend-radar/` - strip any creds/Skool/Notion/Apify refs, audit every file
+- [ ] Push to GitHub once PAT lands with `repo` scope
 
 ### Days 3-5 — Backend additions
 
