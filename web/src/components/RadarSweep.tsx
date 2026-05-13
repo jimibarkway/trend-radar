@@ -38,14 +38,20 @@ export function RadarSweep() {
               <stop offset="0%" stopColor="var(--accent)" stopOpacity="0.18" />
               <stop offset="80%" stopColor="var(--accent)" stopOpacity="0" />
             </radialGradient>
+            {/* Leading sweep line: dim at centre, bright at the rim */}
             <linearGradient id="rg-sweep" x1="0.5" y1="0.5" x2="1" y2="0.5">
               <stop offset="0%" stopColor="var(--accent)" stopOpacity="0" />
-              <stop offset="100%" stopColor="var(--accent)" stopOpacity="0.55" />
+              <stop offset="100%" stopColor="var(--accent)" stopOpacity="0.8" />
             </linearGradient>
-            <radialGradient id="rg-sweep-arc" cx="50%" cy="50%" r="50%">
-              <stop offset="80%" stopColor="var(--accent)" stopOpacity="0" />
-              <stop offset="100%" stopColor="var(--accent)" stopOpacity="0.18" />
-            </radialGradient>
+            {/* Trailing wedge: brightest at the leading line (bottom of the
+                wedge's bounding box), fading angularly behind it. Using a
+                LINEAR gradient perpendicular to the leading edge makes the
+                fade smooth and removes the dark inner gap radial gradients
+                produced. */}
+            <linearGradient id="rg-sweep-arc" x1="0" y1="1" x2="0" y2="0">
+              <stop offset="0%" stopColor="var(--accent)" stopOpacity="0.35" />
+              <stop offset="100%" stopColor="var(--accent)" stopOpacity="0" />
+            </linearGradient>
           </defs>
 
           <circle cx="400" cy="400" r="380" fill="url(#rg-glow)" />
@@ -88,19 +94,22 @@ export function RadarSweep() {
           <circle cx="400" cy="400" r="8" fill="var(--accent)" />
           <circle cx="400" cy="400" r="3" fill="var(--canvas)" />
 
-          {/* Rotating sweep group */}
+          {/* Rotating sweep group. Trailing wedge spans ~40 degrees behind
+              the leading line so it reads as 'just-scanned' atmosphere. */}
           <g className="radar-sweep" style={{ transformOrigin: "400px 400px" } as React.CSSProperties}>
+            {/* Trailing wedge BEHIND the line so the line sits on top */}
+            <path
+              d="M 400 400 L 760 400 A 360 360 0 0 0 676 168 Z"
+              fill="url(#rg-sweep-arc)"
+            />
+            {/* Leading sweep line */}
             <line
               x1="400"
               y1="400"
               x2="760"
               y2="400"
               stroke="url(#rg-sweep)"
-              strokeWidth="2"
-            />
-            <path
-              d="M 400 400 L 760 400 A 360 360 0 0 0 660 156 Z"
-              fill="url(#rg-sweep-arc)"
+              strokeWidth="2.5"
             />
           </g>
         </svg>
