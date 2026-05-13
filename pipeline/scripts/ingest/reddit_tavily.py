@@ -59,12 +59,25 @@ def event_id(url: str) -> str:
     return "reddit:" + hashlib.sha256(url.encode()).hexdigest()[:20]
 
 
-def insert_post(con: sqlite3.Connection, post: dict, sub: str, priority: str) -> bool:
+def url_subreddit(url: str) -> str | None:
+    """Extract the subreddit from a Reddit post URL (/r/<sub>/comments/...)."""
+    import re
+    m = re.search(r"reddit\.com/r/([A-Za-z0-9_]+)/comments/", url)
+    return m.group(1) if m else None
+
+
+def insert_post(con: sqlite3.Connection, post: dict, sub: str, priority: str,
+                allowed_subs: set[str]) -> bool:
     url = post.get("url", "")
     if not url or "reddit.com" not in url:
         return False
-    # Filter out subreddit landing pages - we want actual post URLs (have /comments/).
+    # Filter out subreddit landing pages - we want actual post URLs.
     if "/comments/" not in url:
+        return False
+    # Filter out off-topic spam subs - Tavily's site: filter is fuzzy and
+    # sometimes returns posts from related subs we didn't ask for.
+    actual_sub = url_subreddit(url)
+    if not actual_sub or actual_sub.lower() not in allowed_subs:
         return False
     eid = event_id(url)
     if con.execute("SELECT 1 FROM raw_events WHERE id = ?", (eid,)).fetchone():
@@ -73,7 +86,8 @@ def insert_post(con: sqlite3.Connection, post: dict, sub: str, priority: str) ->
     body = post.get("content", "") or ""
     score = post.get("score", 0)
     engagement = {
-        "subreddit": sub,
+        "subreddit": actual_sub,            # the ACTUAL sub the post is in
+        "searched_sub": sub,                 # the sub we were querying
         "priority": priority,
         "tavily_relevance": score,
     }
@@ -106,6 +120,9 @@ def main():
 
     print(f"[{datetime.now(timezone.utc).isoformat()}] reddit_tavily subs={len(subs)}", file=sys.stderr)
 
+    # Allowlist for the URL-subreddit check (case-insensitive)
+    allowed_subs = {s["name"].lower() for s in config["subreddits"]}
+
     con = sqlite3.connect(str(db_path()))
     total = 0
     for sub_entry in subs:
@@ -115,7 +132,7 @@ def main():
         results = tavily_search(query, key, max_results=sub_entry.get("max_results", 8))
         inserted = 0
         for post in results:
-            if insert_post(con, post, sub, priority):
+            if insert_post(con, post, sub, priority, allowed_subs):
                 inserted += 1
         print(f"  r/{sub:25s}  {len(results):2d} results, {inserted} new", file=sys.stderr)
         total += inserted

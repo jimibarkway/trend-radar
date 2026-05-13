@@ -1,13 +1,16 @@
 {
-  "_comment": "Reddit subreddits scraped daily via Tavily.",
+  "_comment": "Reddit subreddits scraped daily via Tavily. Allowlist also enforced by URL-subreddit check in reddit_tavily.py - posts from off-allowlist subs are dropped at ingest.",
   "subreddits": [
     {"name": "LocalLLaMA", "priority": "high"},
     {"name": "AI_Agents", "priority": "high"},
     {"name": "ClaudeAI", "priority": "high"},
+    {"name": "ClaudeCode", "priority": "high"},
+    {"name": "n8n", "priority": "high"},
     {"name": "ChatGPTCoding", "priority": "med"},
     {"name": "MachineLearning", "priority": "med"},
     {"name": "Automate", "priority": "med"},
     {"name": "ArtificialIntelligence", "priority": "med"},
+    {"name": "singularity", "priority": "low"},
     {"name": "AIToolsCatalog", "priority": "low"}
   ],
   "search_window_hours": 24,
