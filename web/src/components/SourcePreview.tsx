@@ -53,23 +53,65 @@ export function SourcePreview({ event }: { event: RawEvent }) {
     }
   }
 
-  // GitHub trending - show language colour + repo stars
-  if (event.source === "github_trending") {
+  // GitHub - use the auto-generated OG card from opengraph.githubassets.com
+  // Contains the repo name, description, language icon, stars/forks/issues
+  // visually rich, no auth needed, ~100/hr per-viewer-IP (cached).
+  if (event.source === "github_trending" || event.source === "github_release") {
+    const repo = githubOwnerRepo(event);
+    if (repo) {
+      const stars = (eng.stars_total as number) || (eng.stars_period as number) || 0;
+      const overlay =
+        event.source === "github_trending" && stars > 0
+          ? `★ ${fmtNum(stars)}`
+          : event.source === "github_release"
+            ? "release"
+            : "";
+      return (
+        <div
+          className="shrink-0 relative overflow-hidden rounded-md"
+          style={{
+            width: 144,
+            height: 81,
+            background: "var(--surface-3)",
+            border: `1px solid ${colour}33`,
+          }}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={`https://opengraph.githubassets.com/1/${repo.owner}/${repo.repo}`}
+            alt=""
+            loading="lazy"
+            className="absolute inset-0 size-full object-cover"
+            // If the OG image 404s, fall back to the owner avatar
+            onError={(e) => {
+              const img = e.currentTarget;
+              if (!img.dataset.fallback) {
+                img.dataset.fallback = "1";
+                img.src = `https://github.com/${repo.owner}.png?size=200`;
+                img.className = "absolute inset-0 size-full object-contain p-3";
+              }
+            }}
+          />
+          {overlay && (
+            <span
+              className="absolute right-1.5 bottom-1.5 t-mono rounded px-1.5 py-0.5"
+              style={{
+                fontSize: "10px",
+                background: "rgba(0,0,0,0.7)",
+                color: "#fff",
+              }}
+            >
+              {overlay}
+            </span>
+          )}
+        </div>
+      );
+    }
+    // Couldn't extract owner/repo - fall back to icon tile.
     return (
       <IconTile colour={colour} source={event.source}>
         <span className="t-mono" style={{ fontSize: "11px", color: "var(--ink-muted)" }}>
-          ★ {fmtNum((eng.stars_total as number) || (eng.stars_period as number) || 0)}
-        </span>
-      </IconTile>
-    );
-  }
-
-  // GitHub release - show release tag if any
-  if (event.source === "github_release") {
-    return (
-      <IconTile colour={colour} source={event.source}>
-        <span className="t-mono" style={{ fontSize: "11px", color: "var(--ink-muted)" }}>
-          release
+          {event.source === "github_release" ? "release" : "trending"}
         </span>
       </IconTile>
     );
@@ -140,6 +182,26 @@ function IconTile({
       {children}
     </div>
   );
+}
+
+/** Extract "owner/repo" from a github_trending or github_release event. */
+function githubOwnerRepo(event: RawEvent): { owner: string; repo: string } | null {
+  // github_trending: title is "owner/repo"
+  if (event.source === "github_trending" && event.title.includes("/")) {
+    const [owner, repo] = event.title.split("/", 2);
+    if (owner && repo) return { owner: owner.trim(), repo: repo.trim() };
+  }
+  // github_release: author is "owner/repo"
+  if (event.source === "github_release" && event.author && event.author.includes("/")) {
+    const [owner, repo] = event.author.split("/", 2);
+    if (owner && repo) return { owner: owner.trim(), repo: repo.trim() };
+  }
+  // Fallback: parse the URL
+  const m = event.url.match(/github\.com\/([^/]+)\/([^/?#]+)/);
+  if (m) {
+    return { owner: m[1], repo: m[2].replace(/\.git$/, "") };
+  }
+  return null;
 }
 
 function fmtNum(n: number): string {
