@@ -48,65 +48,38 @@ Creative wow-moment: section 5 "Tomorrow's Videos" panel. Most Creative prize in
 - [x] `.env.example`, `LICENSE` (MIT), `README.md` skeleton
 - [x] `next build` passes clean
 
-**Day 2:**
-- [ ] Create Vercel Blob store; capture `BLOB_READ_WRITE_TOKEN`
-- [ ] Write `pipeline/scripts/export_snapshot.py` - reads SQLite, posts `snapshot.json` to Vercel Blob
-- [ ] Cron: hourly snapshot upload from VPS
-- [ ] `web/src/lib/snapshot.ts` - server-side fetch with revalidate caching
-- [ ] Sanitised `pipeline/` mirror of `/root/trend-radar/` - strip any creds/Skool/Notion/Apify refs, audit every file
-- [ ] Push to GitHub once PAT lands with `repo` scope
+**Day 2 (2026-05-13 - shipped same day as Day 1):**
+- [ ] Create Vercel Blob store; capture `BLOB_READ_WRITE_TOKEN` (Jimi action)
+- [x] `pipeline/scripts/export_snapshot.py` - reads SQLite, writes local + uploads to Vercel Blob
+- [ ] Cron: hourly snapshot upload from VPS (Jimi action once Blob token lands)
+- [x] `web/src/lib/snapshot.ts` - server-side fetch with `revalidate: 300`
+- [x] Sanitised `pipeline/` mirror - all `/root/` paths replaced with `TREND_RADAR_ROOT`-aware lib/env.py, all creds via env vars
+- [x] Pushed to GitHub via `gh auth login` device flow
 
-### Days 3-5 - Backend additions
+### Days 3-5 - Backend additions (all shipped Day 1)
 
-**Day 3:**
-- [ ] `pipeline/scripts/velocity.py` - formalise per-source velocity columns:
- - GitHub: stars/day delta (need to snapshot star counts daily)
- - YouTube: views_per_hour × outlier_ratio
- - Reddit: upvotes/hour in first 6h
- - RSS/HN: comment velocity if available
-- [ ] Composite formula update: `composite = (niche × 5) + (velocity × 3) + (freshness × 2)` (was `niche × 6 + freshness × 2 + velocity × 2`). Velocity becomes a bigger lever - fits the "hidden gem" frame.
+- [x] Velocity scoring formalised in `score.py` (per-source metric + raw value persisted to `velocity_snapshots`)
+- [x] Composite formula updated: `(niche × 5) + (velocity × 3) + (freshness × 2)`
+- [x] `pipeline/scripts/cluster.py` - Gemini text-embedding-004 + cosine ≥ 0.82 union-find
+- [x] `clusters` SQLite table with member_count, source_count, cluster_score
+- [x] `hidden_gems` SQL view filtering small repo / small channel / small account / fresh+fast
+- [x] `export_snapshot.py` writes top_opportunities (50) + top_clusters (10) + hidden_gems (20) + tomorrows_videos (5) + velocity_samples (12)
 
-**Day 4:**
-- [ ] `pipeline/scripts/cluster.py` - convergence scoring:
- - Pull last 48h of scored events
- - Embed each title via Gemini `text-embedding-004`
- - Pairwise cosine similarity ≥ 0.82 → same cluster
- - Cluster score = max(member composites) × log(1 + member_count)
- - Write to new `clusters` SQLite table
+### Days 6-9 - Dashboard (all shipped Day 1)
 
-**Day 5:**
-- [ ] Hidden-gem SQL view `hidden_gems`:
- - GitHub repo `< 1k stars` OR
- - YouTube video on channel `< 100k subs` OR
- - X account `< 50k followers` OR
- - Published in last 72h AND velocity_score ≥ 7
-- [ ] `pipeline/scripts/export_snapshot.py` upgrade - include `top_opportunities` (top 50 by composite) + `top_clusters` (top 10) + `hidden_gems` (top 20)
+- [x] `<Hero/>` - live total + sources tracked + hidden-gems count + last-refresh
+- [x] `<TopGem/>` - source + gem-reason badges, 3-axis scores, click-through
+- [x] `<ConvergenceTicker/>` - multi-source clusters with member-source badges
+- [x] `<FullFeed/>` - filterable table (source / min-score / title query)
+- [x] `<HowItWorks/>` - per-source counts + pipeline diagram
+- [x] `<Footer/>` - GitHub link + snapshot age
+- [x] All wired to real seed data (495 events, 50 opps, 20 gems)
 
-### Days 6-9 - Dashboard
-
-**Day 6:** Hero + Today's top hidden gem (sections 1-2)
-- Components: `<Hero/>`, `<TopGem/>`
-- Real data wired from snapshot
-- Polish until it lands
-
-**Day 7:** Convergence ticker (section 3)
-- Horizontal scrolling card row, source-icon badges, trend arrows
-- Hover state for member-event list
-
-**Day 8:** Full feed table (section 4)
-- shadcn `<Table/>` with filters (source / age / min-score)
-- Default sort: composite descending
-- Pagination if >50 rows
-
-**Day 9:** "How it works" + footer (sections 6, 7)
-- Mermaid diagram of pipeline architecture
-- Mobile pass start
-
-### Days 10-11 - Angle generation (the wow)
+### Days 10-11 - Angle generation (shipped, awaiting Gemini key to populate seed)
 
 **Day 10:**
-- [ ] `pipeline/scripts/generate_angles.py` - Gemini 2.5 Pro
-- [ ] System prompt = Jimi's voice rules verbatim from CLAUDE.md
+- [x] `pipeline/scripts/generate_angles.py` - Gemini 2.5 Pro
+- [x] System prompt = Jimi's voice rules verbatim from CLAUDE.md
 - [ ] For each top-5 opportunity, produce: 1 primary title + 4 alt titles + first 2 sentences of hook + 30-sec script outline
 - [ ] Write to `opportunities.angles_json`
 - [ ] Daily cron at 07:50 UTC after scoring
