@@ -13,3 +13,5 @@ node_modules/
 /.local/
 *.pem
 .dry-run-state.json
+.vercel
+.env*.local
