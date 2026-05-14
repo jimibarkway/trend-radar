@@ -68,15 +68,22 @@ CREATE TABLE IF NOT EXISTS opportunity_angles (
 
 -- Hidden-gem view: genuinely small-but-fast-moving signals (the value prop).
 --
--- Two design rules learned the hard way:
+-- Design rules, each learned from a real mislabelling bug:
 --  1. "small" conditions require the metric > 0. A 0/NULL means the ingest
 --     failed to capture the count - it must NOT count as "small" (that once
 --     mislabelled a 96k-star repo as "under 1k stars").
---  2. The 'fresh_fast' path (published in last 72h + high velocity) must
---     EXCLUDE github sources. For github_trending/github_release we set
---     published_at to the ingest time, so they always look "fresh" - that
---     would drag huge well-known repos into the hidden-gems feed. A GitHub
---     repo only qualifies as a gem via the genuine small-repo star test.
+--  2. Each source is a gem via EXACTLY ONE path:
+--       - github_trending  -> small_repo    (genuine star count < 1k)
+--       - youtube_upload   -> small_channel (genuine subscriber count < 50k)
+--       - x                -> small_account (low like count)
+--       - youtube_search / reddit / rss -> fresh_fast (no "small entity"
+--         metric available for these, so fresh + high velocity is the
+--         gem signal)
+--       - github_release   -> never a gem (releases are from big canonical
+--         repos by definition)
+--     A source with a "small entity" test is NEVER a gem via fresh_fast -
+--     otherwise a 740k-sub channel's fresh video, or a 96k-star repo,
+--     would land in the hidden-gems feed. "Hidden" means small.
 DROP VIEW IF EXISTS hidden_gems;
 CREATE VIEW hidden_gems AS
 SELECT
@@ -86,12 +93,12 @@ SELECT
          CAST(json_extract(e.engagement_raw, '$.stars_total') AS INTEGER) BETWEEN 1 AND 999
          THEN 'small_repo'
     WHEN e.source = 'youtube_upload' AND
-         CAST(json_extract(e.engagement_raw, '$.channel_median_views') AS INTEGER) BETWEEN 1 AND 49999
+         CAST(json_extract(e.engagement_raw, '$.channel_subscriber_count') AS INTEGER) BETWEEN 1 AND 49999
          THEN 'small_channel'
     WHEN e.source = 'x' AND
          CAST(json_extract(e.engagement_raw, '$.likes') AS INTEGER) BETWEEN 1 AND 499
          THEN 'small_account'
-    WHEN e.source NOT IN ('github_trending', 'github_release')
+    WHEN e.source IN ('youtube_search', 'reddit', 'rss')
          AND e.published_at > datetime('now', '-72 hours')
          AND e.velocity_score >= 7
          THEN 'fresh_fast'
@@ -105,12 +112,12 @@ WHERE e.composite_score IS NOT NULL
      CAST(json_extract(e.engagement_raw, '$.stars_total') AS INTEGER) BETWEEN 1 AND 999)
     OR
     (e.source = 'youtube_upload' AND
-     CAST(json_extract(e.engagement_raw, '$.channel_median_views') AS INTEGER) BETWEEN 1 AND 49999)
+     CAST(json_extract(e.engagement_raw, '$.channel_subscriber_count') AS INTEGER) BETWEEN 1 AND 49999)
     OR
     (e.source = 'x' AND
      CAST(json_extract(e.engagement_raw, '$.likes') AS INTEGER) BETWEEN 1 AND 499)
     OR
-    (e.source NOT IN ('github_trending', 'github_release')
+    (e.source IN ('youtube_search', 'reddit', 'rss')
      AND e.published_at > datetime('now', '-72 hours')
      AND e.velocity_score >= 7)
   )

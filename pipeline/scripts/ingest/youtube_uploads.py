@@ -34,12 +34,18 @@ def yt_get(path: str, params: dict, key: str) -> dict:
         return json.loads(r.read().decode())
 
 
-def get_uploads_playlist(channel_id: str, key: str) -> str | None:
-    data = yt_get("channels", {"part": "contentDetails", "id": channel_id}, key)
+def get_channel_meta(channel_id: str, key: str) -> tuple[str | None, int]:
+    """Returns (uploads_playlist_id, subscriber_count). One API call -
+    'statistics' added to the part param so the real sub count comes for
+    free. The sub count is what 'small channel' should be judged on, NOT
+    median views."""
+    data = yt_get("channels", {"part": "contentDetails,statistics", "id": channel_id}, key)
     items = data.get("items", [])
     if not items:
-        return None
-    return items[0]["contentDetails"]["relatedPlaylists"]["uploads"]
+        return None, 0
+    uploads = items[0]["contentDetails"]["relatedPlaylists"]["uploads"]
+    subs = int(items[0].get("statistics", {}).get("subscriberCount", 0) or 0)
+    return uploads, subs
 
 
 def list_recent_uploads(playlist_id: str, key: str, max_results: int = 15) -> list[str]:
@@ -103,6 +109,7 @@ def insert_video(con: sqlite3.Connection, video: dict, channel_meta: dict, chann
         "duration_sec": duration_sec, "age_hours": round(age_hours, 1),
         "views_per_hour": round(velocity, 1),
         "channel_median_views": int(channel_median),
+        "channel_subscriber_count": int(channel_meta.get("subscriber_count", 0)),
         "outlier_ratio": outlier_ratio,
         "channel_id": channel_meta["channel_id"],
         "channel_title": channel_meta["title"],
@@ -158,9 +165,10 @@ def main():
         if not cid:
             continue
         try:
-            uploads = get_uploads_playlist(cid, key)
+            uploads, subs = get_channel_meta(cid, key)
             if not uploads:
                 continue
+            ch = {**ch, "subscriber_count": subs}  # real sub count for insert_video
             recent_ids = list_recent_uploads(uploads, key, max_results=15)
             videos = fetch_video_stats(recent_ids, key)
             if not videos:
