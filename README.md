@@ -67,21 +67,33 @@ The dashboard has a "Tomorrow's Videos" panel: the top-5 opportunities passed th
 
 ## Quick start
 
-You need: Python 3.11+, Node 20+, a free [Google AI Studio key](https://aistudio.google.com/apikey) for scoring (and embeddings + angle generation if you want the wow features). Optional: a YouTube Data API key, a Tavily key for Reddit, an Apify token for X.
+### See it in 60 seconds (no API keys)
+
+The repo ships a seed `snapshot.json` with real data, so you can see the full dashboard before touching a single key:
 
 ```bash
 git clone https://github.com/jimibarkway/trend-radar
 cd trend-radar
-cp .env.example .env   # fill in at least GOOGLE_API_KEY
+make demo            # npm install + dev server -> http://localhost:3000
+```
+
+That's it. Real signals, real clusters, real angle drafts - the bundled snapshot.
+
+### Run your own pipeline
+
+When you want it pulling live data for your niche, you need Python 3.11+, Node 20+, and at minimum a free [Google AI Studio key](https://aistudio.google.com/apikey) (Gemini does the scoring, clustering, and angle generation).
+
+```bash
+cp .env.example .env   # paste in GOOGLE_API_KEY - that alone is enough to start
 
 make install           # python + npm deps
-make pipeline          # full run: init -> ingest -> score -> cluster -> angles -> snapshot
+make pipeline          # init -> ingest -> score -> cluster -> angles -> snapshot
 make dev               # http://localhost:3000
 ```
 
-The dashboard reads `web/public/snapshot.json` locally and the Vercel Blob URL in production (set `NEXT_PUBLIC_SNAPSHOT_URL` and `BLOB_READ_WRITE_TOKEN`).
+`make pipeline` works with **only** `GOOGLE_API_KEY`. Sources whose key you haven't set (YouTube, Reddit, X) skip themselves cleanly and the run continues - you'll still get GitHub releases, GitHub trending, and RSS scored and clustered. Add the other keys when you want those sources too (see the table below).
 
-A seed snapshot ships so the dashboard renders something on the first paint, before your pipeline has run.
+The dashboard reads `web/public/snapshot.json` locally and the Vercel Blob URL in production (set `NEXT_PUBLIC_SNAPSHOT_URL` and `BLOB_READ_WRITE_TOKEN`).
 
 ---
 

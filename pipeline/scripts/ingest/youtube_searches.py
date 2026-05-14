@@ -22,7 +22,7 @@ from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent.parent))
-from pipeline.lib.env import db_path, config_path, require_env
+from pipeline.lib.env import db_path, config_path, key_or_skip
 
 YT_API = "https://www.googleapis.com/youtube/v3"
 
@@ -45,7 +45,7 @@ def main():
     ap.add_argument("--max-per-query", type=int, default=15)
     args = ap.parse_args()
 
-    key = require_env("YOUTUBE_API_KEY")
+    key = key_or_skip("YOUTUBE_API_KEY", "youtube_searches")
     cfg = json.loads(config_path("youtube_searches.json").read_text())
     queries = [args.query] if args.query else cfg.get("queries", [])
     since = (datetime.now(timezone.utc) - timedelta(hours=args.lookback_hours)).isoformat()

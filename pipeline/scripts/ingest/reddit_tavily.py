@@ -23,7 +23,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent.parent))
-from pipeline.lib.env import db_path, config_path, require_env
+from pipeline.lib.env import db_path, config_path, key_or_skip
 
 TAVILY_URL = "https://api.tavily.com/search"
 
@@ -161,7 +161,7 @@ def main():
     ap.add_argument("--sub", help="Only one subreddit by name")
     args = ap.parse_args()
 
-    key = require_env("TAVILY_API_KEY")
+    key = key_or_skip("TAVILY_API_KEY", "reddit_tavily")
     config = json.loads(config_path("reddit_subs.json").read_text())
     subs = config["subreddits"]
     if args.sub:

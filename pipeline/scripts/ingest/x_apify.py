@@ -27,7 +27,7 @@ from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent.parent))
-from pipeline.lib.env import db_path, config_path, require_env
+from pipeline.lib.env import db_path, config_path, key_or_skip
 
 ACTOR_ID = "apidojo/twitter-scraper-lite"
 
@@ -140,7 +140,7 @@ def main():
             print(f"  WOULD run apify for {kw!r}", file=sys.stderr)
         return
 
-    token = require_env("APIFY_TOKEN")
+    token = key_or_skip("APIFY_TOKEN", "x_apify")
     con = sqlite3.connect(str(db_path()))
     total = 0
     for kw in keywords:

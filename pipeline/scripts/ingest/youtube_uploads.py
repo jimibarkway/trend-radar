@@ -22,7 +22,7 @@ from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent.parent))
-from pipeline.lib.env import db_path, config_path, require_env
+from pipeline.lib.env import db_path, config_path, key_or_skip
 
 YT_API = "https://www.googleapis.com/youtube/v3"
 
@@ -139,7 +139,7 @@ def main():
     ap.add_argument("--lookback-hours", type=int, default=48)
     args = ap.parse_args()
 
-    key = require_env("YOUTUBE_API_KEY")
+    key = key_or_skip("YOUTUBE_API_KEY", "youtube_uploads")
     channels = json.loads(config_path("channels.json").read_text())["channels"]
     if args.channel:
         wanted = args.channel.lstrip("@")

@@ -90,5 +90,21 @@ def require_env(key: str) -> str:
     return val
 
 
+def key_or_skip(key: str, source_name: str) -> str:
+    """For OPTIONAL ingestion sources. If the key is set, returns it. If not,
+    prints a clear skip message and exits 0 (clean) so `make pipeline` keeps
+    going. This is what lets someone run the whole pipeline with only a
+    GOOGLE_API_KEY - the other sources skip themselves instead of hard-failing."""
+    val = _resolve(key)
+    if not val:
+        print(
+            f"[skip] {source_name}: no {key} set - skipping this source. "
+            f"Add {key} to .env to enable it.",
+            file=sys.stderr,
+        )
+        sys.exit(0)
+    return val
+
+
 def optional_env(key: str, default: str | None = None) -> str | None:
     return _resolve(key) or default
