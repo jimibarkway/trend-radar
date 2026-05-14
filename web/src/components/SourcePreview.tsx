@@ -4,21 +4,25 @@ import { SourceIcon } from "./SourceIcon";
 import type { RawEvent } from "@/lib/snapshot";
 
 /**
- * Per-source visual preview rendered on the left side of each feed card.
+ * Per-source visual preview on the left/top of each feed card.
  *
- * Every external image goes through next/image so Vercel edge-resizes,
- * format-shifts (avif/webp), and caches for 30 days.
+ * Responsive: full-width (16:9) on mobile where the card stacks, fixed-width
+ * from sm+ where it sits beside the content. All external images go through
+ * next/image (Vercel edge-resize + 30-day cache).
  *
  * `size`:
- *   "lg" (default) - 240x135, the classic-view feed cards
- *   "sm"           - 132x74, the compact dashboard feed rows
+ *   "lg" (default) - up to 260px wide, classic-view feed cards
+ *   "sm"           - up to 150px wide, compact dashboard feed rows
  */
 type Size = "lg" | "sm";
 
-const DIMS: Record<Size, { w: number; h: number; icon: number; iconBig: number }> = {
-  lg: { w: 240, h: 135, icon: 72, iconBig: 42 },
-  sm: { w: 132, h: 74, icon: 40, iconBig: 26 },
+// w-full on mobile (the card stacks), a fixed cap from sm+. aspect-video
+// keeps the 16:9 box shape at any width.
+const WIDTH_CLASS: Record<Size, string> = {
+  lg: "w-full sm:w-[260px]",
+  sm: "w-full sm:w-[150px]",
 };
+const ICON_PX: Record<Size, number> = { lg: 44, sm: 30 };
 
 export function SourcePreview({
   event,
@@ -29,9 +33,8 @@ export function SourcePreview({
 }) {
   const eng = (event.engagement as Record<string, unknown> | null) || {};
   const colour = sourceColor(event.source);
-  const d = DIMS[size];
 
-  // YouTube preview - use the real thumbnail
+  // YouTube - real thumbnail
   if (event.source === "youtube_upload" || event.source === "youtube_search") {
     const thumb = (eng.thumbnail_url as string) || "";
     if (thumb) {
@@ -40,17 +43,17 @@ export function SourcePreview({
           colour={colour}
           src={thumb}
           overlay={size === "lg" ? fmtViews(eng.views) : undefined}
-          d={d}
+          size={size}
         />
       );
     }
   }
 
-  // GitHub - use the auto-generated OG card
+  // GitHub - auto-generated OG card
   if (event.source === "github_trending" || event.source === "github_release") {
     const repo = githubOwnerRepo(event);
     if (repo) {
-      const stars = (eng.stars_total as number) || (eng.stars_period as number) || 0;
+      const stars = (eng.stars_total as number) || 0;
       const overlay =
         size === "sm"
           ? undefined
@@ -64,12 +67,12 @@ export function SourcePreview({
           colour={colour}
           src={`https://opengraph.githubassets.com/1/${repo.owner}/${repo.repo}`}
           overlay={overlay}
-          d={d}
+          size={size}
         />
       );
     }
     return (
-      <IconTile colour={colour} source={event.source} d={d}>
+      <IconTile colour={colour} source={event.source} size={size}>
         {size === "lg" && (
           <span className="t-mono" style={{ fontSize: "11px", color: "var(--ink-muted)" }}>
             {event.source === "github_release" ? "release" : "trending"}
@@ -84,27 +87,25 @@ export function SourcePreview({
     const sub = (eng.subreddit as string) || "?";
     return (
       <div
-        className="shrink-0 relative overflow-hidden rounded-md flex flex-col items-center justify-center"
+        className={`${WIDTH_CLASS[size]} aspect-video shrink-0 relative overflow-hidden rounded-md flex flex-col items-center justify-center`}
         style={{
-          width: d.w,
-          height: d.h,
           background: `linear-gradient(135deg, ${colour}, ${colour}88)`,
           border: `1px solid ${colour}55`,
         }}
       >
         <div style={{ color: "rgba(255,255,255,0.95)" }}>
-          <SourceIcon source="reddit" size={size === "lg" ? 36 : 22} />
+          <SourceIcon source="reddit" size={size === "lg" ? 34 : 24} />
         </div>
         <span
           className="t-mono mt-1.5"
           style={{
-            fontSize: size === "lg" ? "16px" : "11px",
+            fontSize: size === "lg" ? "15px" : "12px",
             fontWeight: 600,
             color: "rgba(255,255,255,0.95)",
             letterSpacing: "-0.02em",
           }}
         >
-          r/{sub.length > 14 ? sub.slice(0, 13) + "…" : sub}
+          r/{sub.length > 16 ? sub.slice(0, 15) + "…" : sub}
         </span>
       </div>
     );
@@ -113,7 +114,7 @@ export function SourcePreview({
   // X - brand-coloured tile + likes count
   if (event.source === "x") {
     return (
-      <IconTile colour={colour} source={event.source} d={d}>
+      <IconTile colour={colour} source={event.source} size={size}>
         {size === "lg" && (
           <span className="t-mono" style={{ fontSize: "10px", color: "var(--ink-muted)" }}>
             ♥ {fmtNum((eng.likes as number) || 0)}
@@ -130,19 +131,14 @@ export function SourcePreview({
     if (domain) {
       return (
         <div
-          className="shrink-0 relative overflow-hidden rounded-md flex items-center justify-center"
-          style={{
-            width: d.w,
-            height: d.h,
-            background: "var(--surface-2)",
-            border: `1px solid ${colour}33`,
-          }}
+          className={`${WIDTH_CLASS[size]} aspect-video shrink-0 relative overflow-hidden rounded-md flex items-center justify-center`}
+          style={{ background: "var(--surface-2)", border: `1px solid ${colour}33` }}
         >
           <Image
             src={`https://icons.duckduckgo.com/ip3/${domain}.ico`}
             alt=""
-            width={size === "lg" ? 72 : 36}
-            height={size === "lg" ? 72 : 36}
+            width={size === "lg" ? 64 : 40}
+            height={size === "lg" ? 64 : 40}
             unoptimized
             style={{ objectFit: "contain" }}
           />
@@ -153,7 +149,7 @@ export function SourcePreview({
                 fontSize: "9px",
                 background: "rgba(0,0,0,0.6)",
                 color: "rgba(255,255,255,0.9)",
-                maxWidth: 130,
+                maxWidth: "85%",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
                 whiteSpace: "nowrap",
@@ -166,46 +162,39 @@ export function SourcePreview({
       );
     }
     return (
-      <IconTile colour={colour} source={event.source} d={d}>
+      <IconTile colour={colour} source={event.source} size={size}>
         {size === "lg" && (
           <span
             className="t-mono"
             style={{ fontSize: "9px", color: "var(--ink-muted)", textAlign: "center", lineHeight: 1.2 }}
           >
-            {feed.length > 12 ? feed.slice(0, 11) + "…" : feed}
+            {feed.length > 14 ? feed.slice(0, 13) + "…" : feed}
           </span>
         )}
       </IconTile>
     );
   }
 
-  return <IconTile colour={colour} source={event.source} d={d} />;
+  return <IconTile colour={colour} source={event.source} size={size} />;
 }
-
-type Dims = { w: number; h: number; icon: number; iconBig: number };
 
 function ImageTile({
   colour,
   src,
   overlay,
-  d,
+  size,
 }: {
   colour: string;
   src: string;
   overlay?: string;
-  d: Dims;
+  size: Size;
 }) {
   return (
     <div
-      className="shrink-0 relative overflow-hidden rounded-md"
-      style={{
-        width: d.w,
-        height: d.h,
-        background: "var(--surface-3)",
-        border: `1px solid ${colour}33`,
-      }}
+      className={`${WIDTH_CLASS[size]} aspect-video shrink-0 relative overflow-hidden rounded-md`}
+      style={{ background: "var(--surface-3)", border: `1px solid ${colour}33` }}
     >
-      <Image src={src} alt="" fill sizes={`${d.w}px`} style={{ objectFit: "cover" }} />
+      <Image src={src} alt="" fill sizes="(max-width: 640px) 100vw, 260px" style={{ objectFit: "cover" }} />
       {overlay && (
         <span
           className="absolute right-1.5 bottom-1.5 t-mono rounded px-1.5 py-0.5"
@@ -222,25 +211,23 @@ function IconTile({
   colour,
   source,
   children,
-  d,
+  size,
 }: {
   colour: string;
   source: string;
   children?: React.ReactNode;
-  d: Dims;
+  size: Size;
 }) {
   return (
     <div
-      className="shrink-0 flex flex-col items-center justify-center gap-1 rounded-md"
+      className={`${WIDTH_CLASS[size]} aspect-video shrink-0 flex flex-col items-center justify-center gap-1 rounded-md`}
       style={{
-        width: d.w,
-        height: d.h,
         background: `linear-gradient(135deg, ${colour}1a, ${colour}05)`,
         border: `1px solid ${colour}33`,
       }}
     >
       <div style={{ color: colour }}>
-        <SourceIcon source={source} size={d.iconBig} />
+        <SourceIcon source={source} size={ICON_PX[size]} />
       </div>
       {children}
     </div>
