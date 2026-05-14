@@ -94,6 +94,7 @@ SELECT
          THEN 'small_repo'
     WHEN e.source = 'youtube_upload' AND
          CAST(json_extract(e.engagement_raw, '$.channel_subscriber_count') AS INTEGER) BETWEEN 1 AND 49999
+         AND CAST(json_extract(e.engagement_raw, '$.outlier_ratio') AS REAL) >= 1.5
          THEN 'small_channel'
     WHEN e.source = 'x' AND
          CAST(json_extract(e.engagement_raw, '$.likes') AS INTEGER) BETWEEN 1 AND 499
@@ -113,7 +114,8 @@ WHERE e.composite_score IS NOT NULL
      CAST(json_extract(e.engagement_raw, '$.stars_total') AS INTEGER) BETWEEN 1 AND 999)
     OR
     (e.source = 'youtube_upload' AND
-     CAST(json_extract(e.engagement_raw, '$.channel_subscriber_count') AS INTEGER) BETWEEN 1 AND 49999)
+     CAST(json_extract(e.engagement_raw, '$.channel_subscriber_count') AS INTEGER) BETWEEN 1 AND 49999
+     AND CAST(json_extract(e.engagement_raw, '$.outlier_ratio') AS REAL) >= 1.5)
     OR
     (e.source = 'x' AND
      CAST(json_extract(e.engagement_raw, '$.likes') AS INTEGER) BETWEEN 1 AND 499)

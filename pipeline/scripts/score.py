@@ -103,10 +103,15 @@ def velocity_score(event: dict) -> tuple[float, str, float]:
     engagement = json.loads(event.get("engagement_raw") or "{}")
     source = event["source"]
     if source == "youtube_upload":
+        # outlier_ratio (this video's views vs the channel's OWN median) is
+        # THE signal - it answers "is this video overperforming for its
+        # channel?". views-per-hour is only a minor kicker now: the old
+        # log(vph)*0.8 term handed a fresh-but-modest video ~3.6 velocity
+        # just for being new, which floated below-average videos to the top.
         outlier = engagement.get("outlier_ratio", 1.0)
         vph = engagement.get("views_per_hour", 0)
-        v = min(10, outlier * 1.5 + math.log1p(vph) * 0.8)
-        return (v, "outlier_ratio_x_views_per_hour", float(vph))
+        v = min(10, outlier * 2.5 + math.log1p(vph) * 0.3)
+        return (v, "outlier_ratio", float(outlier))
     if source == "youtube_search":
         # views/hour, but the old log1p(vph)*1.5 curve saturated far too
         # fast: a 179 views/hr video scored 7.8/10, making a 358-view video

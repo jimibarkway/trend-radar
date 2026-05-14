@@ -60,7 +60,7 @@ export function formatNumber(n: number | undefined | null): string {
 export function gemReasonLabel(reason: string | null | undefined): string {
   switch (reason) {
     case "small_repo": return "Small repo · under 1k stars";
-    case "small_channel": return "Small channel · under 50k subs";
+    case "small_channel": return "Small channel outlier · overperforming";
     case "small_account": return "Small account";
     case "fresh_fast": return "Fresh & accelerating";
     default: return "Hidden gem";
