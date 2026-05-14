@@ -1,7 +1,6 @@
 import Image from "next/image";
 import { sourceColor } from "@/lib/format";
 import { SourceIcon } from "./SourceIcon";
-import { AvatarBadge } from "./AvatarBadge";
 import type { RawEvent } from "@/lib/snapshot";
 
 /**
@@ -32,7 +31,7 @@ export function SourcePreview({
   const colour = sourceColor(event.source);
   const d = DIMS[size];
 
-  // YouTube preview - thumbnail + channel avatar in the corner
+  // YouTube preview - use the real thumbnail
   if (event.source === "youtube_upload" || event.source === "youtube_search") {
     const thumb = (eng.thumbnail_url as string) || "";
     if (thumb) {
@@ -41,14 +40,13 @@ export function SourcePreview({
           colour={colour}
           src={thumb}
           overlay={size === "lg" ? fmtViews(eng.views) : undefined}
-          avatar={(eng.channel_avatar_url as string) || undefined}
           d={d}
         />
       );
     }
   }
 
-  // GitHub - OG card + repo owner's avatar in the corner
+  // GitHub - use the auto-generated OG card
   if (event.source === "github_trending" || event.source === "github_release") {
     const repo = githubOwnerRepo(event);
     if (repo) {
@@ -66,7 +64,6 @@ export function SourcePreview({
           colour={colour}
           src={`https://opengraph.githubassets.com/1/${repo.owner}/${repo.repo}`}
           overlay={overlay}
-          avatar={`https://github.com/${repo.owner}.png?size=80`}
           d={d}
         />
       );
@@ -113,15 +110,10 @@ export function SourcePreview({
     );
   }
 
-  // X - brand-coloured tile + author avatar (resolved via unavatar.io) + likes
+  // X - brand-coloured tile + likes count
   if (event.source === "x") {
-    const handle = (eng.author_handle as string) || "";
-    const avatar =
-      handle && handle !== "?"
-        ? `https://unavatar.io/twitter/${handle}`
-        : undefined;
     return (
-      <IconTile colour={colour} source={event.source} d={d} avatar={avatar}>
+      <IconTile colour={colour} source={event.source} d={d}>
         {size === "lg" && (
           <span className="t-mono" style={{ fontSize: "10px", color: "var(--ink-muted)" }}>
             ♥ {fmtNum((eng.likes as number) || 0)}
@@ -196,13 +188,11 @@ function ImageTile({
   colour,
   src,
   overlay,
-  avatar,
   d,
 }: {
   colour: string;
   src: string;
   overlay?: string;
-  avatar?: string;
   d: Dims;
 }) {
   return (
@@ -216,7 +206,6 @@ function ImageTile({
       }}
     >
       <Image src={src} alt="" fill sizes={`${d.w}px`} style={{ objectFit: "cover" }} />
-      {avatar && <AvatarBadge src={avatar} size={d.w > 180 ? "lg" : "sm"} />}
       {overlay && (
         <span
           className="absolute right-1.5 bottom-1.5 t-mono rounded px-1.5 py-0.5"
@@ -233,18 +222,16 @@ function IconTile({
   colour,
   source,
   children,
-  avatar,
   d,
 }: {
   colour: string;
   source: string;
   children?: React.ReactNode;
-  avatar?: string;
   d: Dims;
 }) {
   return (
     <div
-      className="shrink-0 relative flex flex-col items-center justify-center gap-1 rounded-md"
+      className="shrink-0 flex flex-col items-center justify-center gap-1 rounded-md"
       style={{
         width: d.w,
         height: d.h,
@@ -256,7 +243,6 @@ function IconTile({
         <SourceIcon source={source} size={d.iconBig} />
       </div>
       {children}
-      {avatar && <AvatarBadge src={avatar} size={d.w > 180 ? "lg" : "sm"} />}
     </div>
   );
 }

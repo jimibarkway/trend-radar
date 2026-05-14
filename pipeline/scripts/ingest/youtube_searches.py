@@ -80,27 +80,6 @@ def main():
             print(f"  ! stats fetch failed for {q!r}: {e}", file=sys.stderr)
             continue
 
-        # Resolve channel avatars - one batched channels call for the unique
-        # channel IDs in this result set.
-        channel_ids = sorted({
-            v["snippet"].get("channelId")
-            for v in stats_by_id.values()
-            if v.get("snippet", {}).get("channelId")
-        })
-        avatar_by_channel: dict[str, str] = {}
-        if channel_ids:
-            try:
-                ch_data = yt_get("channels", {"part": "snippet", "id": ",".join(channel_ids)}, key)
-                for ch in ch_data.get("items", []):
-                    thumbs = ch.get("snippet", {}).get("thumbnails", {})
-                    avatar_by_channel[ch["id"]] = (
-                        thumbs.get("medium", {}).get("url")
-                        or thumbs.get("default", {}).get("url")
-                        or ""
-                    )
-            except Exception:
-                pass
-
         inserted = 0
         for v in stats_by_id.values():
             vid = v["id"]
@@ -133,7 +112,6 @@ def main():
                 "age_hours": round(age_hours, 1), "views_per_hour": round(vph, 1),
                 "channel_id": snippet.get("channelId"),
                 "channel_title": snippet.get("channelTitle"),
-                "channel_avatar_url": avatar_by_channel.get(snippet.get("channelId", ""), ""),
                 "thumbnail_url": snippet["thumbnails"].get("high", {}).get("url", ""),
             }
             con.execute(
