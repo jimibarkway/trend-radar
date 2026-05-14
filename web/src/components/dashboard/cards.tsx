@@ -25,7 +25,7 @@ export function OverviewCard({ snapshot }: { snapshot: Snapshot | null }) {
   return (
     <Card id="overview" className="relative" noPad>
       <RadarMini />
-      <div className="relative z-10 flex h-full flex-col justify-between p-5 md:p-6">
+      <div className="relative z-10 flex h-full flex-col justify-between gap-4 p-5 md:p-6">
         <div>
           <p className="t-micro-label mb-2" style={{ color: "var(--accent)" }}>
             Trend Radar · live
@@ -33,10 +33,10 @@ export function OverviewCard({ snapshot }: { snapshot: Snapshot | null }) {
           <h1
             className="font-semibold"
             style={{
-              fontSize: "clamp(22px, 2.4vw, 32px)",
-              lineHeight: 1.12,
+              fontSize: "clamp(20px, 2.1vw, 28px)",
+              lineHeight: 1.14,
               letterSpacing: "-0.03em",
-              maxWidth: "16ch",
+              maxWidth: "13ch",
             }}
           >
             Finds AI topics before they hit mainstream.
@@ -249,37 +249,35 @@ export function ConvergenceCard({ snapshot }: { snapshot: Snapshot | null }) {
           {clusters.map((c) => (
             <div
               key={c.id}
-              className="flex gap-3 rounded-lg p-3"
+              className="flex gap-3.5 rounded-lg p-3.5"
               style={{ background: "var(--surface-2)", border: "1px solid var(--hairline)" }}
             >
+              {/* The graph already encodes which sources converged (coloured
+                  nodes) - no need for a separate icon row. */}
               <div className="shrink-0">
-                <ClusterGraph cluster={c} size={88} />
+                <ClusterGraph cluster={c} size={96} />
               </div>
-              <div className="min-w-0 flex-1">
-                <div className="mb-1.5 flex items-center gap-1.5">
-                  {c.sources.map((s) => (
-                    <span
-                      key={s}
-                      className="inline-flex items-center justify-center size-5 rounded-full"
-                      style={{ background: sourceColor(s) + "22", color: sourceColor(s) }}
-                      title={sourceLabel(s)}
-                    >
-                      <SourceIcon source={s} size={10} />
-                    </span>
-                  ))}
-                  <span className="ml-auto t-mono" style={{ color: "var(--accent)", fontSize: "12px" }}>
+              <div className="flex min-w-0 flex-1 flex-col">
+                <div className="mb-1.5 flex items-center gap-2">
+                  <span
+                    className="t-mono"
+                    style={{ color: "var(--accent)", fontSize: "13px", fontWeight: 600 }}
+                  >
                     {c.cluster_score.toFixed(0)}
+                  </span>
+                  <span
+                    className="t-supporting"
+                    style={{ color: "var(--ink-tertiary)", fontSize: "11px" }}
+                  >
+                    {c.member_count} signals · {c.source_count} sources
                   </span>
                 </div>
                 <h3
-                  className="line-clamp-2"
-                  style={{ color: "var(--ink)", fontSize: "14px", fontWeight: 500, lineHeight: 1.3 }}
+                  className="line-clamp-3"
+                  style={{ color: "var(--ink)", fontSize: "13.5px", fontWeight: 500, lineHeight: 1.32 }}
                 >
                   {c.centroid_title}
                 </h3>
-                <p className="t-supporting mt-1" style={{ fontSize: "11px" }}>
-                  {c.member_count} signals · {c.source_count} sources
-                </p>
               </div>
             </div>
           ))}
@@ -358,8 +356,8 @@ export function FeedCard({ snapshot }: { snapshot: Snapshot | null }) {
       {opps.length === 0 ? (
         <p className="t-supporting p-5">No scored signals yet.</p>
       ) : (
-        <div className="h-full overflow-y-auto">
-          {opps.map((o, i) => {
+        <div className="h-full overflow-y-auto p-3 md:p-4 space-y-2.5">
+          {opps.map((o) => {
             const col = sourceColor(o.source);
             const score = o.composite_score ?? 0;
             const scoreColour =
@@ -370,30 +368,55 @@ export function FeedCard({ snapshot }: { snapshot: Snapshot | null }) {
                 href={o.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-3 px-4 md:px-5 py-2.5 transition-colors hover:bg-[var(--surface-2)]"
+                className="flex gap-3 rounded-lg p-2.5 transition-colors hover:bg-[var(--surface-3)]"
                 style={{
-                  borderBottom: i < opps.length - 1 ? "1px solid var(--hairline)" : "none",
+                  background: "var(--surface-2)",
+                  border: "1px solid var(--hairline)",
                   borderLeft: `2px solid ${col}`,
                 }}
               >
-                <div className="shrink-0" style={{ color: col }}>
-                  <SourceIcon source={o.source} size={14} />
+                <SourcePreview event={o} size="sm" />
+                <div className="flex min-w-0 flex-1 flex-col justify-between">
+                  <div>
+                    <div className="mb-1 flex items-center gap-2">
+                      <span style={{ color: col }}>
+                        <SourceIcon source={o.source} size={11} />
+                      </span>
+                      <span
+                        className="t-supporting"
+                        style={{ color: "var(--ink-tertiary)", fontSize: "11px" }}
+                      >
+                        {sourceLabel(o.source)} · {relativeTime(o.published_at)}
+                      </span>
+                    </div>
+                    <h3
+                      className="line-clamp-2"
+                      style={{ color: "var(--ink)", fontSize: "13px", fontWeight: 500, lineHeight: 1.3 }}
+                    >
+                      {o.title}
+                    </h3>
+                  </div>
+                  <div className="mt-1.5 flex items-center gap-2">
+                    <div
+                      className="h-1 flex-1 max-w-[120px] rounded-full overflow-hidden"
+                      style={{ background: "var(--surface-3)" }}
+                    >
+                      <div
+                        style={{
+                          width: `${Math.min(100, score)}%`,
+                          height: "100%",
+                          background: scoreColour,
+                        }}
+                      />
+                    </div>
+                    <span
+                      className="t-mono"
+                      style={{ color: scoreColour, fontSize: "12px", fontWeight: 600 }}
+                    >
+                      {formatScore(o.composite_score)}
+                    </span>
+                  </div>
                 </div>
-                <span
-                  className="min-w-0 flex-1 truncate"
-                  style={{ color: "var(--ink)", fontSize: "13px" }}
-                >
-                  {o.title}
-                </span>
-                <span className="t-supporting hidden sm:inline" style={{ color: "var(--ink-tertiary)", fontSize: "11px" }}>
-                  {relativeTime(o.published_at)}
-                </span>
-                <span
-                  className="t-mono shrink-0"
-                  style={{ color: scoreColour, fontSize: "13px", fontWeight: 600, width: 28, textAlign: "right" }}
-                >
-                  {formatScore(o.composite_score)}
-                </span>
               </a>
             );
           })}

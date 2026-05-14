@@ -75,15 +75,23 @@ export function RadarMini() {
       <style>{`
         .radar-mini-wrap {
           position: absolute;
-          inset: 0;
+          /* Anchored to the TOP-RIGHT corner so it sits behind the headline
+             whitespace only - the stat tiles along the bottom stay clear. */
+          top: -70px;
+          right: -80px;
+          width: 300px;
+          height: 300px;
           display: flex;
           align-items: center;
           justify-content: center;
-          mask-image: radial-gradient(circle at center, black 62%, transparent 88%);
-          -webkit-mask-image: radial-gradient(circle at center, black 62%, transparent 88%);
+          mask-image: radial-gradient(circle at center, black 56%, transparent 80%);
+          -webkit-mask-image: radial-gradient(circle at center, black 56%, transparent 80%);
           pointer-events: none;
         }
-        .radar-mini-svg { width: 115%; height: 115%; }
+        @media (max-width: 1023px) {
+          .radar-mini-wrap { right: -90px; top: -90px; width: 260px; height: 260px; opacity: 0.7; }
+        }
+        .radar-mini-svg { width: 100%; height: 100%; }
         .radar-mini-sweep { animation: rm-spin 6s linear infinite; }
         .radar-mini-ping { animation: rm-ping 3s ease-in-out infinite; }
         @keyframes rm-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }

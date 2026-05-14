@@ -7,20 +7,41 @@ import type { RawEvent } from "@/lib/snapshot";
  * Per-source visual preview rendered on the left side of each feed card.
  *
  * Every external image goes through next/image so Vercel edge-resizes,
- * format-shifts (avif/webp), and caches for 30 days. This is what turns the
- * 'few seconds to load after Show More' issue (GitHub OG rate-limit at
- * 100/hr per viewer IP) into a single fast call after the first visitor.
+ * format-shifts (avif/webp), and caches for 30 days.
+ *
+ * `size`:
+ *   "lg" (default) - 240x135, the classic-view feed cards
+ *   "sm"           - 132x74, the compact dashboard feed rows
  */
-export function SourcePreview({ event }: { event: RawEvent }) {
+type Size = "lg" | "sm";
+
+const DIMS: Record<Size, { w: number; h: number; icon: number; iconBig: number }> = {
+  lg: { w: 240, h: 135, icon: 72, iconBig: 42 },
+  sm: { w: 132, h: 74, icon: 40, iconBig: 26 },
+};
+
+export function SourcePreview({
+  event,
+  size = "lg",
+}: {
+  event: RawEvent;
+  size?: Size;
+}) {
   const eng = (event.engagement as Record<string, unknown> | null) || {};
   const colour = sourceColor(event.source);
+  const d = DIMS[size];
 
   // YouTube preview - use the real thumbnail
   if (event.source === "youtube_upload" || event.source === "youtube_search") {
     const thumb = (eng.thumbnail_url as string) || "";
     if (thumb) {
       return (
-        <ImageTile colour={colour} src={thumb} overlay={fmtViews(eng.views)} />
+        <ImageTile
+          colour={colour}
+          src={thumb}
+          overlay={size === "lg" ? fmtViews(eng.views) : undefined}
+          d={d}
+        />
       );
     }
   }
@@ -31,74 +52,78 @@ export function SourcePreview({ event }: { event: RawEvent }) {
     if (repo) {
       const stars = (eng.stars_total as number) || (eng.stars_period as number) || 0;
       const overlay =
-        event.source === "github_trending" && stars > 0
-          ? `★ ${fmtNum(stars)}`
-          : event.source === "github_release"
-            ? "release"
-            : "";
+        size === "sm"
+          ? undefined
+          : event.source === "github_trending" && stars > 0
+            ? `★ ${fmtNum(stars)}`
+            : event.source === "github_release"
+              ? "release"
+              : "";
       return (
         <ImageTile
           colour={colour}
           src={`https://opengraph.githubassets.com/1/${repo.owner}/${repo.repo}`}
           overlay={overlay}
+          d={d}
         />
       );
     }
     return (
-      <IconTile colour={colour} source={event.source}>
-        <span className="t-mono" style={{ fontSize: "11px", color: "var(--ink-muted)" }}>
-          {event.source === "github_release" ? "release" : "trending"}
-        </span>
+      <IconTile colour={colour} source={event.source} d={d}>
+        {size === "lg" && (
+          <span className="t-mono" style={{ fontSize: "11px", color: "var(--ink-muted)" }}>
+            {event.source === "github_release" ? "release" : "trending"}
+          </span>
+        )}
       </IconTile>
     );
   }
 
-  // Reddit - subreddit gradient + sub name (no reliable per-post image yet)
+  // Reddit - subreddit gradient + sub name
   if (event.source === "reddit") {
     const sub = (eng.subreddit as string) || "?";
     return (
       <div
         className="shrink-0 relative overflow-hidden rounded-md flex flex-col items-center justify-center"
         style={{
-          width: TILE_W,
-          height: TILE_H,
+          width: d.w,
+          height: d.h,
           background: `linear-gradient(135deg, ${colour}, ${colour}88)`,
           border: `1px solid ${colour}55`,
         }}
       >
         <div style={{ color: "rgba(255,255,255,0.95)" }}>
-          <SourceIcon source="reddit" size={36} />
+          <SourceIcon source="reddit" size={size === "lg" ? 36 : 22} />
         </div>
         <span
-          className="t-mono mt-2"
+          className="t-mono mt-1.5"
           style={{
-            fontSize: "16px",
+            fontSize: size === "lg" ? "16px" : "11px",
             fontWeight: 600,
             color: "rgba(255,255,255,0.95)",
             letterSpacing: "-0.02em",
           }}
         >
-          r/{sub}
+          r/{sub.length > 14 ? sub.slice(0, 13) + "…" : sub}
         </span>
       </div>
     );
   }
 
-  // X - author avatar would be ideal; the ingest doesn't store it yet, so
-  // render the brand-coloured tile with likes count.
+  // X - brand-coloured tile + likes count
   if (event.source === "x") {
     return (
-      <IconTile colour={colour} source={event.source}>
-        <span className="t-mono" style={{ fontSize: "10px", color: "var(--ink-muted)" }}>
-          ♥ {fmtNum((eng.likes as number) || 0)}
-        </span>
+      <IconTile colour={colour} source={event.source} d={d}>
+        {size === "lg" && (
+          <span className="t-mono" style={{ fontSize: "10px", color: "var(--ink-muted)" }}>
+            ♥ {fmtNum((eng.likes as number) || 0)}
+          </span>
+        )}
       </IconTile>
     );
   }
 
-  // RSS - use the feed's actual favicon via DuckDuckGo's favicon service.
-  // We don't have the feed URL in the event; map common feed names to a
-  // canonical domain. Anything not in the map falls back to the icon tile.
+  // RSS - the feed's actual favicon via DuckDuckGo's favicon service
   if (event.source === "rss") {
     const feed = (eng.feed as string) || event.source_subtype || "";
     const domain = RSS_DOMAINS[feed];
@@ -107,8 +132,8 @@ export function SourcePreview({ event }: { event: RawEvent }) {
         <div
           className="shrink-0 relative overflow-hidden rounded-md flex items-center justify-center"
           style={{
-            width: TILE_W,
-            height: TILE_H,
+            width: d.w,
+            height: d.h,
             background: "var(--surface-2)",
             border: `1px solid ${colour}33`,
           }}
@@ -116,82 +141,75 @@ export function SourcePreview({ event }: { event: RawEvent }) {
           <Image
             src={`https://icons.duckduckgo.com/ip3/${domain}.ico`}
             alt=""
-            width={72}
-            height={72}
+            width={size === "lg" ? 72 : 36}
+            height={size === "lg" ? 72 : 36}
             unoptimized
             style={{ objectFit: "contain" }}
           />
-          <span
-            className="absolute right-1.5 bottom-1.5 t-mono rounded px-1.5 py-0.5"
-            style={{
-              fontSize: "9px",
-              background: "rgba(0,0,0,0.6)",
-              color: "rgba(255,255,255,0.9)",
-              maxWidth: 130,
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-            }}
-          >
-            {feed}
-          </span>
+          {size === "lg" && (
+            <span
+              className="absolute right-1.5 bottom-1.5 t-mono rounded px-1.5 py-0.5"
+              style={{
+                fontSize: "9px",
+                background: "rgba(0,0,0,0.6)",
+                color: "rgba(255,255,255,0.9)",
+                maxWidth: 130,
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {feed}
+            </span>
+          )}
         </div>
       );
     }
     return (
-      <IconTile colour={colour} source={event.source}>
-        <span
-          className="t-mono"
-          style={{ fontSize: "9px", color: "var(--ink-muted)", textAlign: "center", lineHeight: 1.2 }}
-        >
-          {feed.length > 12 ? feed.slice(0, 11) + "…" : feed}
-        </span>
+      <IconTile colour={colour} source={event.source} d={d}>
+        {size === "lg" && (
+          <span
+            className="t-mono"
+            style={{ fontSize: "9px", color: "var(--ink-muted)", textAlign: "center", lineHeight: 1.2 }}
+          >
+            {feed.length > 12 ? feed.slice(0, 11) + "…" : feed}
+          </span>
+        )}
       </IconTile>
     );
   }
 
-  return <IconTile colour={colour} source={event.source} />;
+  return <IconTile colour={colour} source={event.source} d={d} />;
 }
 
-// Card preview tile dimensions. 240x135 (16:9) - big enough that OG card
-// text reads at a glance and YouTube thumbnails feel like real previews.
-const TILE_W = 240;
-const TILE_H = 135;
+type Dims = { w: number; h: number; icon: number; iconBig: number };
 
 function ImageTile({
   colour,
   src,
   overlay,
+  d,
 }: {
   colour: string;
   src: string;
   overlay?: string;
+  d: Dims;
 }) {
   return (
     <div
       className="shrink-0 relative overflow-hidden rounded-md"
       style={{
-        width: TILE_W,
-        height: TILE_H,
+        width: d.w,
+        height: d.h,
         background: "var(--surface-3)",
         border: `1px solid ${colour}33`,
       }}
     >
-      <Image
-        src={src}
-        alt=""
-        fill
-        sizes={`${TILE_W}px`}
-        style={{ objectFit: "cover" }}
-      />
+      <Image src={src} alt="" fill sizes={`${d.w}px`} style={{ objectFit: "cover" }} />
       {overlay && (
         <span
           className="absolute right-1.5 bottom-1.5 t-mono rounded px-1.5 py-0.5"
-          style={{
-            fontSize: "10px",
-            background: "rgba(0,0,0,0.7)",
-            color: "#fff",
-          }}
+          style={{ fontSize: "10px", background: "rgba(0,0,0,0.7)", color: "#fff" }}
         >
           {overlay}
         </span>
@@ -204,23 +222,25 @@ function IconTile({
   colour,
   source,
   children,
+  d,
 }: {
   colour: string;
   source: string;
   children?: React.ReactNode;
+  d: Dims;
 }) {
   return (
     <div
-      className="shrink-0 flex flex-col items-center justify-center gap-1.5 rounded-md"
+      className="shrink-0 flex flex-col items-center justify-center gap-1 rounded-md"
       style={{
-        width: TILE_W,
-        height: TILE_H,
+        width: d.w,
+        height: d.h,
         background: `linear-gradient(135deg, ${colour}1a, ${colour}05)`,
         border: `1px solid ${colour}33`,
       }}
     >
       <div style={{ color: colour }}>
-        <SourceIcon source={source} size={42} />
+        <SourceIcon source={source} size={d.iconBig} />
       </div>
       {children}
     </div>
