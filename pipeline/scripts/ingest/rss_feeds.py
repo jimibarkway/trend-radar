@@ -57,6 +57,16 @@ def insert_entry(con: sqlite3.Connection, feed_name: str, entry, priority: str) 
             ).isoformat()
         except Exception:
             pass
+    # Some feeds publish items with a future date (scheduled posts, timezone
+    # quirks). An item can't genuinely be published after we ingested it -
+    # clamp to "now" so freshness scoring and lead-time stay sane.
+    now = datetime.now(timezone.utc)
+    if published:
+        try:
+            if datetime.fromisoformat(published.replace("Z", "+00:00")) > now:
+                published = now.isoformat()
+        except Exception:
+            pass
     author = entry.get("author") or feed_name
 
     engagement = {"priority": priority, "feed": feed_name}

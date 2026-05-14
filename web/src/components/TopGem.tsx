@@ -6,14 +6,18 @@ export function TopGem({ snapshot }: { snapshot: Snapshot | null }) {
   const gem = snapshot?.hidden_gems?.[0];
 
   // Compute the "caught early" lead time - how long after publish we
-  // ingested it. This is the system's reason-for-being and deserves visual
-  // prominence. Returns null if we don't have both timestamps.
+  // ingested it. Returns null when it can't be a real claim:
+  //  - github_trending sets published_at = ingest time (no real publish
+  //    date for a trending repo), so the lead time would be a meaningless 0
+  //  - missing/invalid timestamps, or ingest at-or-before publish
   const leadTime = (() => {
     if (!gem?.published_at || !gem?.ingested_at) return null;
+    if (gem.source === "github_trending") return null;
     const pub = new Date(gem.published_at).getTime();
     const ing = new Date(gem.ingested_at).getTime();
     if (Number.isNaN(pub) || Number.isNaN(ing) || ing <= pub) return null;
     const mins = Math.round((ing - pub) / 60000);
+    if (mins < 1) return null;
     if (mins < 60) return `${mins} min`;
     if (mins < 60 * 48) return `${Math.round(mins / 60)} h`;
     return `${Math.round(mins / (60 * 24))} d`;

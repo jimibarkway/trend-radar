@@ -86,12 +86,17 @@ function Stat({
 export function TopGemCard({ snapshot }: { snapshot: Snapshot | null }) {
   const gem = snapshot?.hidden_gems?.[0];
 
+  // "Caught early" lead time. Null when it can't be a real claim:
+  // github_trending has no real publish date (published_at = ingest time),
+  // and sub-minute deltas aren't a meaningful "detected N after publish".
   const leadTime = (() => {
     if (!gem?.published_at || !gem?.ingested_at) return null;
+    if (gem.source === "github_trending") return null;
     const pub = new Date(gem.published_at).getTime();
     const ing = new Date(gem.ingested_at).getTime();
     if (Number.isNaN(pub) || Number.isNaN(ing) || ing <= pub) return null;
     const mins = Math.round((ing - pub) / 60000);
+    if (mins < 1) return null;
     if (mins < 60) return `${mins} min`;
     if (mins < 60 * 48) return `${Math.round(mins / 60)} h`;
     return `${Math.round(mins / (60 * 24))} d`;

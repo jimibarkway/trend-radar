@@ -40,7 +40,7 @@ else
 fi
 
 # Re-cluster the last 96h window
-if python3 -m pipeline.scripts.cluster --window-hours 96 --threshold 0.78 >> "$LOG" 2>&1; then
+if python3 -m pipeline.scripts.cluster --window-hours 96 >> "$LOG" 2>&1; then
   say "  ✓ cluster"
 else
   say "  ✗ cluster failed (exit $?)"

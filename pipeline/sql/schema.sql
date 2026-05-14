@@ -99,7 +99,7 @@ SELECT
          CAST(json_extract(e.engagement_raw, '$.likes') AS INTEGER) BETWEEN 1 AND 499
          THEN 'small_account'
     WHEN e.source IN ('youtube_search', 'reddit', 'rss')
-         AND e.published_at > datetime('now', '-72 hours')
+         AND datetime(e.published_at) > datetime('now', '-72 hours')
          AND e.velocity_score >= 7
          THEN 'fresh_fast'
     ELSE NULL
@@ -118,7 +118,7 @@ WHERE e.composite_score IS NOT NULL
      CAST(json_extract(e.engagement_raw, '$.likes') AS INTEGER) BETWEEN 1 AND 499)
     OR
     (e.source IN ('youtube_search', 'reddit', 'rss')
-     AND e.published_at > datetime('now', '-72 hours')
+     AND datetime(e.published_at) > datetime('now', '-72 hours')
      AND e.velocity_score >= 7)
   )
 ORDER BY e.composite_score DESC;
