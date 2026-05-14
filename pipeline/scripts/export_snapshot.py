@@ -21,6 +21,7 @@ Usage:
 import argparse
 import json
 import os
+import re
 import sqlite3
 import sys
 import urllib.request
@@ -42,6 +43,54 @@ def fetch_event_row(row: sqlite3.Row) -> dict:
     return d
 
 
+def canonical_key(event: dict) -> str:
+    """A stable identity for an event regardless of which source/day it came
+    in on. Collapses 'same repo trending two days running' and 'same repo in
+    trending + release' into one feed entry.
+
+    - GitHub: owner/repo (so trending + release of the same repo dedupe)
+    - YouTube: the video id
+    - everything else: the URL itself
+    """
+    url = event.get("url", "") or ""
+    m = re.search(r"github\.com/([^/]+)/([^/?#]+)", url)
+    if m:
+        return f"github:{m.group(1).lower()}/{m.group(2).lower().replace('.git', '')}"
+    m = re.search(r"[?&]v=([A-Za-z0-9_-]+)", url)
+    if m:
+        return f"youtube:{m.group(1)}"
+    m = re.search(r"youtu\.be/([A-Za-z0-9_-]+)", url)
+    if m:
+        return f"youtube:{m.group(1)}"
+    return url.rstrip("/").lower()
+
+
+def dedupe_events(events: list[dict]) -> list[dict]:
+    """Keep one event per canonical key - the highest composite, then the
+    most recently ingested. Input is assumed sorted by composite desc."""
+    seen: dict[str, dict] = {}
+    for ev in events:
+        key = canonical_key(ev)
+        existing = seen.get(key)
+        if existing is None:
+            seen[key] = ev
+            continue
+        # Prefer higher composite; tie-break on more recent ingest
+        ev_score = ev.get("composite_score") or 0
+        ex_score = existing.get("composite_score") or 0
+        if ev_score > ex_score or (
+            ev_score == ex_score
+            and (ev.get("ingested_at") or "") > (existing.get("ingested_at") or "")
+        ):
+            seen[key] = ev
+    # Preserve composite-desc order
+    return sorted(
+        seen.values(),
+        key=lambda e: e.get("composite_score") or 0,
+        reverse=True,
+    )
+
+
 def build_snapshot(con: sqlite3.Connection) -> dict:
     con.row_factory = sqlite3.Row
 
@@ -59,11 +108,15 @@ def build_snapshot(con: sqlite3.Connection) -> dict:
         "FROM raw_events"
     ).fetchone()
 
-    top_opportunities = [fetch_event_row(r) for r in con.execute(
+    # Fetch a wide pool, dedupe by canonical key (collapses the same repo
+    # trending on consecutive days, or trending + release of one repo),
+    # then take the top 50.
+    opp_pool = [fetch_event_row(r) for r in con.execute(
         "SELECT * FROM raw_events "
         "WHERE composite_score IS NOT NULL "
-        "ORDER BY composite_score DESC LIMIT 50"
+        "ORDER BY composite_score DESC LIMIT 200"
     )]
+    top_opportunities = dedupe_events(opp_pool)[:50]
 
     top_clusters_rows = con.execute(
         "SELECT * FROM clusters WHERE source_count >= 2 "
@@ -81,9 +134,10 @@ def build_snapshot(con: sqlite3.Connection) -> dict:
         cd["members"] = [dict(m) for m in members]
         top_clusters.append(cd)
 
-    hidden_gems = [fetch_event_row(r) for r in con.execute(
-        "SELECT * FROM hidden_gems LIMIT 20"
+    gem_pool = [fetch_event_row(r) for r in con.execute(
+        "SELECT * FROM hidden_gems LIMIT 80"
     )]
+    hidden_gems = dedupe_events(gem_pool)[:20]
 
     # tomorrows_videos = top-5 opportunities that already have angles
     tomorrows_videos = []
