@@ -211,7 +211,7 @@ function FeedCard({ event }: { event: RawEvent }) {
         borderLeft: `3px solid ${col}`,
       }}
     >
-      <div className="flex gap-5 md:gap-6 p-5 md:p-6">
+      <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 p-4 sm:p-5 md:p-6">
         <SourcePreview event={event} />
         <div className="min-w-0 flex-1 flex flex-col justify-between gap-4">
           {/* Meta row */}

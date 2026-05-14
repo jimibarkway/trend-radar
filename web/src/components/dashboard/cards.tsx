@@ -245,7 +245,7 @@ export function ConvergenceCard({ snapshot }: { snapshot: Snapshot | null }) {
       {clusters.length === 0 ? (
         <p className="t-supporting p-5">Clusters appear after the first cluster run.</p>
       ) : (
-        <div className="h-full overflow-y-auto p-4 md:p-5 space-y-3">
+        <div className="lg:h-full lg:overflow-y-auto p-4 md:p-5 space-y-3">
           {clusters.map((c) => (
             <div
               key={c.id}
@@ -297,7 +297,7 @@ export function VideosCard({ snapshot }: { snapshot: Snapshot | null }) {
       {videos.length === 0 ? (
         <p className="t-supporting p-5">Run angle generation to populate this.</p>
       ) : (
-        <div className="h-full overflow-y-auto p-4 md:p-5 space-y-3">
+        <div className="lg:h-full lg:overflow-y-auto p-4 md:p-5 space-y-3">
           {videos.map((v) => (
             <a
               key={v.id}
@@ -356,7 +356,7 @@ export function FeedCard({ snapshot }: { snapshot: Snapshot | null }) {
       {opps.length === 0 ? (
         <p className="t-supporting p-5">No scored signals yet.</p>
       ) : (
-        <div className="h-full overflow-y-auto p-3 md:p-4 space-y-2.5">
+        <div className="lg:h-full lg:overflow-y-auto p-3 md:p-4 space-y-2.5">
           {opps.map((o) => {
             const col = sourceColor(o.source);
             const score = o.composite_score ?? 0;
@@ -368,7 +368,7 @@ export function FeedCard({ snapshot }: { snapshot: Snapshot | null }) {
                 href={o.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex gap-3 rounded-lg p-2.5 transition-colors hover:bg-[var(--surface-3)]"
+                className="flex flex-col sm:flex-row gap-3 rounded-lg p-2.5 transition-colors hover:bg-[var(--surface-3)]"
                 style={{
                   background: "var(--surface-2)",
                   border: "1px solid var(--hairline)",

@@ -37,13 +37,13 @@ export function DashboardLayout({ snapshot }: { snapshot: Snapshot | null }) {
           </div>
 
           {/* Row 3 - feed + convergence + videos */}
-          <div className="lg:col-span-5 h-[460px]">
+          <div className="lg:col-span-5 lg:h-[460px]">
             <FeedCard snapshot={snapshot} />
           </div>
-          <div className="lg:col-span-4 h-[460px]">
+          <div className="lg:col-span-4 lg:h-[460px]">
             <ConvergenceCard snapshot={snapshot} />
           </div>
-          <div className="lg:col-span-3 h-[460px]">
+          <div className="lg:col-span-3 lg:h-[460px]">
             <VideosCard snapshot={snapshot} />
           </div>
 
