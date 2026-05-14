@@ -58,13 +58,14 @@ export function TrendChart({ timeline }: { timeline: ActivityBucket[] | undefine
     return { src, d: `M ${top.join(" L ")} L ${bot.join(" L ")} Z` };
   });
 
-  const ticks = [0, 12, 24, 36, 48]
+  // Time axis labels - left edge is oldest, right edge is now
+  const ticks = [48, 36, 24, 12, 0]
     .map((hoursAgo) => {
       const idx = n - 1 - hoursAgo;
       if (idx < 0) return null;
-      return { x: xAt(idx), label: hoursAgo === 0 ? "now" : `${hoursAgo}h ago` };
+      return { label: hoursAgo === 0 ? "now" : `-${hoursAgo}h` };
     })
-    .filter((t): t is { x: number; label: string } => t !== null);
+    .filter((t): t is { label: string } => t !== null);
 
   return (
     <div className="flex h-full flex-col">
@@ -137,48 +138,45 @@ export function TrendChart({ timeline }: { timeline: ActivityBucket[] | undefine
             opacity="0.7"
           />
           <circle cx={xAt(peakIdx)} cy={yAt(maxTotal)} r="3.5" fill="var(--accent)" />
-          {ticks.map((t) => (
-            <line
-              key={t.label}
-              x1={t.x}
-              x2={t.x}
-              y1={H - padB}
-              y2={H - padB + 4}
-              stroke="var(--ink-tertiary)"
-              strokeWidth="1"
-            />
-          ))}
         </svg>
       </div>
 
-      {/* x-axis labels + legend */}
-      <div className="mt-1.5 flex flex-wrap items-center justify-between gap-2">
-        <div className="flex flex-wrap gap-x-3 gap-y-1">
-          {present.map((s) => (
+      {/* Time axis - spread edge-to-edge so it reads left-to-right as time.
+          Oldest on the left, "now" on the right. */}
+      <div
+        className="mt-1 flex items-center justify-between"
+        style={{ color: "var(--ink-tertiary)" }}
+      >
+        {ticks.map((t) => (
+          <span key={t.label} className="t-mono" style={{ fontSize: "10px" }}>
+            {t.label}
+          </span>
+        ))}
+      </div>
+      <div className="mt-0.5 text-center">
+        <span className="t-supporting" style={{ color: "var(--ink-tertiary)", fontSize: "9px" }}>
+          time (hours ago)
+        </span>
+      </div>
+
+      {/* Source legend - its own row, clearly separate from the time axis */}
+      <div
+        className="mt-2 flex flex-wrap gap-x-3 gap-y-1 pt-2"
+        style={{ borderTop: "1px solid var(--hairline)" }}
+      >
+        {present.map((s) => (
+          <span
+            key={s}
+            className="t-supporting inline-flex items-center gap-1"
+            style={{ color: "var(--ink-muted)", fontSize: "10px" }}
+          >
             <span
-              key={s}
-              className="t-supporting inline-flex items-center gap-1"
-              style={{ color: "var(--ink-muted)", fontSize: "10px" }}
-            >
-              <span
-                className="inline-block size-2 rounded-sm"
-                style={{ background: sourceColor(s) }}
-              />
-              {sourceLabel(s)}
-            </span>
-          ))}
-        </div>
-        <div className="flex gap-3">
-          {ticks.map((t) => (
-            <span
-              key={t.label}
-              className="t-supporting"
-              style={{ color: "var(--ink-tertiary)", fontSize: "10px" }}
-            >
-              {t.label}
-            </span>
-          ))}
-        </div>
+              className="inline-block size-2 rounded-sm"
+              style={{ background: sourceColor(s) }}
+            />
+            {sourceLabel(s)}
+          </span>
+        ))}
       </div>
     </div>
   );

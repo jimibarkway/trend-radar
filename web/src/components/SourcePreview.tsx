@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { sourceColor } from "@/lib/format";
 import { SourceIcon } from "./SourceIcon";
+import { SourceImageTile } from "./SourceImageTile";
 import type { RawEvent } from "@/lib/snapshot";
 
 /**
@@ -34,22 +35,24 @@ export function SourcePreview({
   const eng = (event.engagement as Record<string, unknown> | null) || {};
   const colour = sourceColor(event.source);
 
-  // YouTube - real thumbnail
+  // YouTube - real thumbnail (falls back to the branded icon tile on error)
   if (event.source === "youtube_upload" || event.source === "youtube_search") {
     const thumb = (eng.thumbnail_url as string) || "";
     if (thumb) {
       return (
-        <ImageTile
-          colour={colour}
+        <SourceImageTile
           src={thumb}
+          colour={colour}
+          source={event.source}
           overlay={size === "lg" ? fmtViews(eng.views) : undefined}
-          size={size}
+          widthClass={WIDTH_CLASS[size]}
         />
       );
     }
   }
 
-  // GitHub - auto-generated OG card
+  // GitHub - auto-generated OG card (falls back to the branded icon tile if
+  // the OG endpoint is rate-limited / slow / missing - never blank)
   if (event.source === "github_trending" || event.source === "github_release") {
     const repo = githubOwnerRepo(event);
     if (repo) {
@@ -63,11 +66,13 @@ export function SourcePreview({
               ? "release"
               : "";
       return (
-        <ImageTile
-          colour={colour}
+        <SourceImageTile
           src={`https://opengraph.githubassets.com/1/${repo.owner}/${repo.repo}`}
+          colour={colour}
+          source={event.source}
           overlay={overlay}
-          size={size}
+          fallbackLabel={event.source === "github_release" ? "release" : "trending"}
+          widthClass={WIDTH_CLASS[size]}
         />
       );
     }
@@ -176,35 +181,6 @@ export function SourcePreview({
   }
 
   return <IconTile colour={colour} source={event.source} size={size} />;
-}
-
-function ImageTile({
-  colour,
-  src,
-  overlay,
-  size,
-}: {
-  colour: string;
-  src: string;
-  overlay?: string;
-  size: Size;
-}) {
-  return (
-    <div
-      className={`${WIDTH_CLASS[size]} aspect-video shrink-0 relative overflow-hidden rounded-md`}
-      style={{ background: "var(--surface-3)", border: `1px solid ${colour}33` }}
-    >
-      <Image src={src} alt="" fill sizes="(max-width: 640px) 100vw, 260px" style={{ objectFit: "cover" }} />
-      {overlay && (
-        <span
-          className="absolute right-1.5 bottom-1.5 t-mono rounded px-1.5 py-0.5"
-          style={{ fontSize: "10px", background: "rgba(0,0,0,0.7)", color: "#fff" }}
-        >
-          {overlay}
-        </span>
-      )}
-    </div>
-  );
 }
 
 function IconTile({
