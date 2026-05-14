@@ -66,6 +66,13 @@ export type VelocitySample = {
   url: string;
 };
 
+// One hourly bucket of ingest counts. `hour` is an ISO-ish "YYYY-MM-DDTHH:00"
+// string; `total` is the sum; every source key is zero-filled.
+export type ActivityBucket = {
+  hour: string;
+  total: number;
+} & Record<string, number | string>;
+
 export type Snapshot = {
   version: number;
   generated_at: string;
@@ -81,6 +88,7 @@ export type Snapshot = {
   hidden_gems: HiddenGem[];
   tomorrows_videos: TomorrowsVideo[];
   velocity_samples: VelocitySample[];
+  activity_timeline?: ActivityBucket[];
 };
 
 const REMOTE_URL = process.env.NEXT_PUBLIC_SNAPSHOT_URL;

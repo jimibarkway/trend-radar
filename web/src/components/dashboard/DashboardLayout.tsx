@@ -1,12 +1,14 @@
 import type { Snapshot } from "@/lib/snapshot";
 import { TopBar } from "./TopBar";
+import { Card } from "./Card";
+import { TrendChart } from "./TrendChart";
+import { FeedCard } from "./FeedCard";
 import {
   OverviewCard,
   TopGemCard,
   SourceStatsRow,
   ConvergenceCard,
   VideosCard,
-  FeedCard,
   HowCard,
 } from "./cards";
 
@@ -23,20 +25,27 @@ export function DashboardLayout({ snapshot }: { snapshot: Snapshot | null }) {
       <TopBar snapshot={snapshot} />
       <main className="flex-1 overflow-y-auto p-4 md:p-5">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 auto-rows-min">
-          {/* Row 1 - radar overview + feature gem */}
-          <div className="lg:col-span-5 lg:h-[300px]">
-            <OverviewCard snapshot={snapshot} />
-          </div>
-          <div className="lg:col-span-7 lg:h-[300px]">
+          {/* Row 1 - feature gem (dominant) + slim radar overview */}
+          <div className="lg:col-span-8 lg:h-[300px]">
             <TopGemCard snapshot={snapshot} />
           </div>
+          <div className="lg:col-span-4 lg:h-[300px]">
+            <OverviewCard snapshot={snapshot} />
+          </div>
 
-          {/* Row 2 - per-source stat strip */}
+          {/* Row 2 - the trend line: hourly activity over 48h */}
+          <div className="lg:col-span-12 lg:h-[280px]">
+            <Card label="Ingest activity · last 48 hours" className="min-h-0">
+              <TrendChart timeline={snapshot?.activity_timeline} />
+            </Card>
+          </div>
+
+          {/* Row 3 - per-source stat strip */}
           <div className="lg:col-span-12">
             <SourceStatsRow snapshot={snapshot} />
           </div>
 
-          {/* Row 3 - feed + convergence + videos */}
+          {/* Row 4 - feed + convergence + videos */}
           <div className="lg:col-span-5 lg:h-[460px]">
             <FeedCard snapshot={snapshot} />
           </div>
@@ -47,7 +56,7 @@ export function DashboardLayout({ snapshot }: { snapshot: Snapshot | null }) {
             <VideosCard snapshot={snapshot} />
           </div>
 
-          {/* Row 4 - pipeline explainer */}
+          {/* Row 5 - pipeline explainer */}
           <div className="lg:col-span-12">
             <HowCard />
           </div>

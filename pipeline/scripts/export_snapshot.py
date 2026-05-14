@@ -165,6 +165,11 @@ def build_snapshot(con: sqlite3.Connection) -> dict:
         "ORDER BY vs.velocity DESC LIMIT 12"
     )]
 
+    # Activity timeline - hourly ingest counts per source over the last 48h.
+    # This is the real time-series the dashboard's trend chart renders. The
+    # hourly cron builds this history naturally via each event's ingested_at.
+    activity_timeline = build_activity_timeline(con, hours=48)
+
     return {
         "version": 1,
         "generated_at": datetime.now(timezone.utc).isoformat(),
@@ -180,7 +185,42 @@ def build_snapshot(con: sqlite3.Connection) -> dict:
         "hidden_gems": hidden_gems,
         "tomorrows_videos": tomorrows_videos,
         "velocity_samples": velocity_samples,
+        "activity_timeline": activity_timeline,
     }
+
+
+def build_activity_timeline(con: sqlite3.Connection, hours: int = 48) -> list[dict]:
+    """48 hourly buckets of ingest counts per source. Every bucket has an
+    entry for every source (zero-filled) so the stacked area chart on the
+    dashboard has a clean, gap-free series to draw."""
+    from datetime import timedelta
+
+    rows = con.execute(
+        "SELECT strftime('%Y-%m-%dT%H:00', ingested_at) AS hour, "
+        "       source, COUNT(*) AS c "
+        "FROM raw_events "
+        "WHERE ingested_at > datetime('now', ?) "
+        "GROUP BY hour, source",
+        (f"-{hours} hours",),
+    ).fetchall()
+
+    sources = sorted({r["source"] for r in rows})
+    by_hour: dict[str, dict[str, int]] = {}
+    for r in rows:
+        by_hour.setdefault(r["hour"], {})[r["source"]] = r["c"]
+
+    # Build a continuous hour axis so the chart never has gaps, even for
+    # hours where nothing was ingested.
+    now = datetime.now(timezone.utc).replace(minute=0, second=0, microsecond=0)
+    timeline = []
+    for i in range(hours, -1, -1):
+        h = (now - timedelta(hours=i)).strftime("%Y-%m-%dT%H:00")
+        counts = by_hour.get(h, {})
+        bucket = {"hour": h, "total": sum(counts.values())}
+        for s in sources:
+            bucket[s] = counts.get(s, 0)
+        timeline.append(bucket)
+    return timeline
 
 
 def write_local(snapshot: dict) -> Path:

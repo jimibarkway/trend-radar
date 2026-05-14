@@ -4,7 +4,6 @@ import { RadarMini } from "./RadarMini";
 import { CountUp } from "@/components/CountUp";
 import { SourceIcon } from "@/components/SourceIcon";
 import { ClusterGraph } from "@/components/ClusterGraph";
-import { SourcePreview } from "@/components/SourcePreview";
 import {
   relativeTime,
   sourceLabel,
@@ -208,20 +207,32 @@ export function SourceStatsRow({ snapshot }: { snapshot: Snapshot | null }) {
         return (
           <div
             key={s}
-            className="rounded-xl p-3"
-            style={{ background: "var(--surface-1)", border: "1px solid var(--hairline)" }}
+            className="relative overflow-hidden rounded-xl p-3"
+            style={{
+              background: "var(--surface-1)",
+              border: "1px solid var(--hairline)",
+              borderTop: `2px solid ${col}`,
+            }}
           >
-            <div className="mb-2 flex items-center gap-1.5" style={{ color: col }}>
-              <SourceIcon source={s} size={13} />
-              <span className="t-micro-label" style={{ fontSize: "9px", color: col }}>
-                {sourceLabel(s)}
-              </span>
-            </div>
-            <div className="font-semibold leading-none" style={{ fontSize: "22px", letterSpacing: "-0.02em" }}>
-              {formatNumber(c)}
-            </div>
-            <div className="t-supporting" style={{ color: "var(--ink-tertiary)", fontSize: "10px" }}>
-              {pct}% of feed
+            {/* subtle source-colour wash so the stat row carries more colour */}
+            <div
+              className="pointer-events-none absolute inset-0"
+              style={{ background: `linear-gradient(180deg, ${col}14, transparent 55%)` }}
+              aria-hidden
+            />
+            <div className="relative">
+              <div className="mb-2 flex items-center gap-1.5" style={{ color: col }}>
+                <SourceIcon source={s} size={13} />
+                <span className="t-micro-label" style={{ fontSize: "9px", color: col }}>
+                  {sourceLabel(s)}
+                </span>
+              </div>
+              <div className="font-semibold leading-none" style={{ fontSize: "22px", letterSpacing: "-0.02em" }}>
+                {formatNumber(c)}
+              </div>
+              <div className="t-supporting" style={{ color: "var(--ink-tertiary)", fontSize: "10px" }}>
+                {pct}% of feed
+              </div>
             </div>
           </div>
         );
@@ -333,125 +344,45 @@ export function VideosCard({ snapshot }: { snapshot: Snapshot | null }) {
 }
 
 /* ------------------------------------------------------------------ */
-/* Full feed - compact, scrollable. Filtering lives on the classic view */
-/* ------------------------------------------------------------------ */
-export function FeedCard({ snapshot }: { snapshot: Snapshot | null }) {
-  const opps = snapshot?.top_opportunities ?? [];
-  return (
-    <Card
-      id="feed"
-      label={`Full feed · ${opps.length} scored`}
-      className="min-h-0"
-      noPad
-      action={
-        <a
-          href="/classic#feed"
-          className="t-micro-label"
-          style={{ color: "var(--ink-tertiary)" }}
-        >
-          Filter in classic view →
-        </a>
-      }
-    >
-      {opps.length === 0 ? (
-        <p className="t-supporting p-5">No scored signals yet.</p>
-      ) : (
-        <div className="lg:h-full lg:overflow-y-auto p-3 md:p-4 space-y-2.5">
-          {opps.map((o) => {
-            const col = sourceColor(o.source);
-            const score = o.composite_score ?? 0;
-            const scoreColour =
-              score >= 70 ? "var(--accent)" : score >= 50 ? "var(--rising)" : "var(--ink-subtle)";
-            return (
-              <a
-                key={o.id}
-                href={o.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex flex-col sm:flex-row gap-3 rounded-lg p-2.5 transition-colors hover:bg-[var(--surface-3)]"
-                style={{
-                  background: "var(--surface-2)",
-                  border: "1px solid var(--hairline)",
-                  borderLeft: `2px solid ${col}`,
-                }}
-              >
-                <SourcePreview event={o} size="sm" />
-                <div className="flex min-w-0 flex-1 flex-col justify-between">
-                  <div>
-                    <div className="mb-1 flex items-center gap-2">
-                      <span style={{ color: col }}>
-                        <SourceIcon source={o.source} size={11} />
-                      </span>
-                      <span
-                        className="t-supporting"
-                        style={{ color: "var(--ink-tertiary)", fontSize: "11px" }}
-                      >
-                        {sourceLabel(o.source)} · {relativeTime(o.published_at)}
-                      </span>
-                    </div>
-                    <h3
-                      className="line-clamp-2"
-                      style={{ color: "var(--ink)", fontSize: "13px", fontWeight: 500, lineHeight: 1.3 }}
-                    >
-                      {o.title}
-                    </h3>
-                  </div>
-                  <div className="mt-1.5 flex items-center gap-2">
-                    <div
-                      className="h-1 flex-1 max-w-[120px] rounded-full overflow-hidden"
-                      style={{ background: "var(--surface-3)" }}
-                    >
-                      <div
-                        style={{
-                          width: `${Math.min(100, score)}%`,
-                          height: "100%",
-                          background: scoreColour,
-                        }}
-                      />
-                    </div>
-                    <span
-                      className="t-mono"
-                      style={{ color: scoreColour, fontSize: "12px", fontWeight: 600 }}
-                    >
-                      {formatScore(o.composite_score)}
-                    </span>
-                  </div>
-                </div>
-              </a>
-            );
-          })}
-        </div>
-      )}
-    </Card>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/* How it works - compact                                              */
+/* How it works - compact horizontal pipeline strip                    */
 /* ------------------------------------------------------------------ */
 export function HowCard() {
   const steps = [
-    "ingest -> SQLite (1 row per signal)",
-    "score: Gemini niche + velocity + freshness",
-    "composite = (niche x 5) + (velocity x 3) + (freshness x 2)",
-    "cluster: embeddings, cosine >= 0.82",
-    "angles: Gemini Pro on the top 5",
-    "snapshot -> Vercel Blob -> this dashboard",
+    { k: "ingest", v: "6 sources -> SQLite" },
+    { k: "score", v: "Gemini: niche + velocity + freshness" },
+    { k: "composite", v: "(niche x5) + (velocity x3) + (freshness x2)" },
+    { k: "cluster", v: "embeddings, cosine >= 0.82" },
+    { k: "angles", v: "Gemini Pro on the top 5" },
+    { k: "snapshot", v: "-> Vercel Blob -> this dashboard" },
   ];
   return (
-    <Card id="how" label="How it works" className="min-h-0">
-      <ol className="space-y-2">
+    <Card id="how" label="How it works · the pipeline" className="min-h-0">
+      <div className="flex flex-col gap-2 md:flex-row md:flex-wrap md:items-stretch">
         {steps.map((s, i) => (
-          <li key={i} className="flex gap-2.5" style={{ fontSize: "12.5px", color: "var(--ink-muted)" }}>
-            <span className="t-mono shrink-0" style={{ color: "var(--accent)" }}>
-              {i + 1}
-            </span>
-            <span className="t-mono" style={{ fontSize: "11.5px" }}>
-              {s}
-            </span>
-          </li>
+          <div key={s.k} className="flex items-stretch gap-2 md:flex-1">
+            <div
+              className="flex-1 rounded-lg px-3 py-2"
+              style={{ background: "var(--surface-2)", border: "1px solid var(--hairline)" }}
+            >
+              <div className="t-micro-label mb-0.5" style={{ color: "var(--accent)", fontSize: "9px" }}>
+                {i + 1} · {s.k}
+              </div>
+              <div className="t-mono" style={{ fontSize: "10.5px", color: "var(--ink-muted)" }}>
+                {s.v}
+              </div>
+            </div>
+            {i < steps.length - 1 && (
+              <span
+                className="hidden md:flex items-center"
+                style={{ color: "var(--ink-tertiary)" }}
+                aria-hidden
+              >
+                →
+              </span>
+            )}
+          </div>
         ))}
-      </ol>
+      </div>
     </Card>
   );
 }
