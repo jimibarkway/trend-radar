@@ -34,12 +34,21 @@ def yt_get(path: str, params: dict, key: str) -> dict:
         return json.loads(r.read().decode())
 
 
-def get_uploads_playlist(channel_id: str, key: str) -> str | None:
-    data = yt_get("channels", {"part": "contentDetails", "id": channel_id}, key)
+def get_channel_meta(channel_id: str, key: str) -> tuple[str | None, str | None]:
+    """Returns (uploads_playlist_id, channel_avatar_url). One API call,
+    snippet added to the part param so the avatar comes for free."""
+    data = yt_get("channels", {"part": "contentDetails,snippet", "id": channel_id}, key)
     items = data.get("items", [])
     if not items:
-        return None
-    return items[0]["contentDetails"]["relatedPlaylists"]["uploads"]
+        return None, None
+    uploads = items[0]["contentDetails"]["relatedPlaylists"]["uploads"]
+    thumbs = items[0].get("snippet", {}).get("thumbnails", {})
+    avatar = (
+        thumbs.get("medium", {}).get("url")
+        or thumbs.get("default", {}).get("url")
+        or thumbs.get("high", {}).get("url")
+    )
+    return uploads, avatar
 
 
 def list_recent_uploads(playlist_id: str, key: str, max_results: int = 15) -> list[str]:
@@ -107,6 +116,7 @@ def insert_video(con: sqlite3.Connection, video: dict, channel_meta: dict, chann
         "channel_id": channel_meta["channel_id"],
         "channel_title": channel_meta["title"],
         "channel_handle": channel_meta["handle"],
+        "channel_avatar_url": channel_meta.get("avatar_url", ""),
         "thumbnail_url": snippet["thumbnails"].get("maxres", snippet["thumbnails"].get("high", {})).get("url", ""),
     }
     con.execute(
@@ -158,9 +168,10 @@ def main():
         if not cid:
             continue
         try:
-            uploads = get_uploads_playlist(cid, key)
+            uploads, avatar = get_channel_meta(cid, key)
             if not uploads:
                 continue
+            ch = {**ch, "avatar_url": avatar}  # thread avatar into channel_meta
             recent_ids = list_recent_uploads(uploads, key, max_results=15)
             videos = fetch_video_stats(recent_ids, key)
             if not videos:
