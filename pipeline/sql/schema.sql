@@ -66,22 +66,34 @@ CREATE TABLE IF NOT EXISTS opportunity_angles (
   FOREIGN KEY (event_id) REFERENCES raw_events(id)
 );
 
--- Hidden-gem view: small-but-fast-moving signals (the unique value prop).
+-- Hidden-gem view: genuinely small-but-fast-moving signals (the value prop).
+--
+-- Two design rules learned the hard way:
+--  1. "small" conditions require the metric > 0. A 0/NULL means the ingest
+--     failed to capture the count - it must NOT count as "small" (that once
+--     mislabelled a 96k-star repo as "under 1k stars").
+--  2. The 'fresh_fast' path (published in last 72h + high velocity) must
+--     EXCLUDE github sources. For github_trending/github_release we set
+--     published_at to the ingest time, so they always look "fresh" - that
+--     would drag huge well-known repos into the hidden-gems feed. A GitHub
+--     repo only qualifies as a gem via the genuine small-repo star test.
 DROP VIEW IF EXISTS hidden_gems;
 CREATE VIEW hidden_gems AS
 SELECT
   e.*,
   CASE
     WHEN e.source = 'github_trending' AND
-         CAST(json_extract(e.engagement_raw, '$.stars_total') AS INTEGER) < 1000
+         CAST(json_extract(e.engagement_raw, '$.stars_total') AS INTEGER) BETWEEN 1 AND 999
          THEN 'small_repo'
     WHEN e.source = 'youtube_upload' AND
-         CAST(json_extract(e.engagement_raw, '$.channel_median_views') AS INTEGER) < 50000
+         CAST(json_extract(e.engagement_raw, '$.channel_median_views') AS INTEGER) BETWEEN 1 AND 49999
          THEN 'small_channel'
     WHEN e.source = 'x' AND
-         CAST(json_extract(e.engagement_raw, '$.likes') AS INTEGER) < 500
+         CAST(json_extract(e.engagement_raw, '$.likes') AS INTEGER) BETWEEN 1 AND 499
          THEN 'small_account'
-    WHEN e.published_at > datetime('now', '-72 hours') AND e.velocity_score >= 7
+    WHEN e.source NOT IN ('github_trending', 'github_release')
+         AND e.published_at > datetime('now', '-72 hours')
+         AND e.velocity_score >= 7
          THEN 'fresh_fast'
     ELSE NULL
   END AS gem_reason
@@ -90,14 +102,16 @@ WHERE e.composite_score IS NOT NULL
   AND e.composite_score >= 40
   AND (
     (e.source = 'github_trending' AND
-     CAST(json_extract(e.engagement_raw, '$.stars_total') AS INTEGER) < 1000)
+     CAST(json_extract(e.engagement_raw, '$.stars_total') AS INTEGER) BETWEEN 1 AND 999)
     OR
     (e.source = 'youtube_upload' AND
-     CAST(json_extract(e.engagement_raw, '$.channel_median_views') AS INTEGER) < 50000)
+     CAST(json_extract(e.engagement_raw, '$.channel_median_views') AS INTEGER) BETWEEN 1 AND 49999)
     OR
     (e.source = 'x' AND
-     CAST(json_extract(e.engagement_raw, '$.likes') AS INTEGER) < 500)
+     CAST(json_extract(e.engagement_raw, '$.likes') AS INTEGER) BETWEEN 1 AND 499)
     OR
-    (e.published_at > datetime('now', '-72 hours') AND e.velocity_score >= 7)
+    (e.source NOT IN ('github_trending', 'github_release')
+     AND e.published_at > datetime('now', '-72 hours')
+     AND e.velocity_score >= 7)
   )
 ORDER BY e.composite_score DESC;

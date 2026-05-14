@@ -15,14 +15,36 @@ import json
 import re
 import sqlite3
 import sys
+import urllib.error
 import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent.parent))
-from pipeline.lib.env import db_path, config_path
+from pipeline.lib.env import db_path, config_path, optional_env
 
 UA = "Mozilla/5.0 (X11; Linux x86_64) trend-radar/0.2"
+
+
+def github_stargazers(repo_path: str) -> int | None:
+    """Authoritative total star count from the GitHub API. The trending page
+    HTML markup for the total-stars badge changes often and the regex scrape
+    is unreliable (it had silently been returning 0 for every repo). The API
+    is the source of truth. Uses GITHUB_TOKEN if available (5000/hr) else the
+    unauthenticated limit (60/hr). Returns None on failure."""
+    token = optional_env("GITHUB_TOKEN")
+    headers = {"User-Agent": "trend-radar/0.2", "Accept": "application/vnd.github+json"}
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+    req = urllib.request.Request(
+        f"https://api.github.com/repos/{repo_path}", headers=headers
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=15) as r:
+            data = json.loads(r.read().decode())
+        return int(data.get("stargazers_count", 0))
+    except Exception:
+        return None
 
 
 def fetch_trending(since: str = "daily") -> str:
@@ -52,15 +74,11 @@ def parse_trending(html: str) -> list[dict]:
         language = lang_m.group(1) if lang_m else ""
         stars_m = re.search(r'(\d[\d,]*)\s+stars?\s+(?:today|this)', row, flags=re.IGNORECASE)
         stars_period = int(stars_m.group(1).replace(",", "")) if stars_m else 0
-        total_m = re.search(r'aria-label="[\d,]+ stars"', row)
-        total = 0
-        if total_m:
-            t = re.search(r'(\d[\d,]+)', total_m.group(0))
-            if t:
-                total = int(t.group(1).replace(",", ""))
+        # stars_total comes from the GitHub API in main() - the HTML badge
+        # for it is unreliable to scrape.
         out.append({
             "owner": owner, "name": name, "description": description,
-            "language": language, "stars_period": stars_period, "stars_total": total,
+            "language": language, "stars_period": stars_period, "stars_total": 0,
         })
     return out
 
@@ -97,6 +115,11 @@ def main():
         eid = event_id(repo_path, today)
         if con.execute("SELECT 1 FROM raw_events WHERE id = ?", (eid,)).fetchone():
             continue
+        # Authoritative total star count from the API (the HTML scrape for
+        # this was silently returning 0 for every repo).
+        stars_total = github_stargazers(repo_path)
+        if stars_total is not None:
+            r["stars_total"] = stars_total
         engagement = {**r, "window": args.window, "snapshot_date": today}
         con.execute(
             """INSERT INTO raw_events
