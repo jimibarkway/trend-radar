@@ -199,7 +199,10 @@ export function SourceStatsRow({ snapshot }: { snapshot: Snapshot | null }) {
   const present = SOURCE_ORDER.filter((s) => counts[s]);
 
   return (
-    <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-7 gap-3">
+    // flex (not a fixed-column grid) so the cards always fill 100% width
+    // no matter how many sources currently have data - a fixed 7-col grid
+    // left an empty slot when only 6 sources were present.
+    <div className="flex flex-wrap gap-3">
       {present.map((s) => {
         const c = counts[s] ?? 0;
         const pct = total ? Math.round((c / total) * 100) : 0;
@@ -207,7 +210,7 @@ export function SourceStatsRow({ snapshot }: { snapshot: Snapshot | null }) {
         return (
           <div
             key={s}
-            className="relative overflow-hidden rounded-xl p-3"
+            className="relative overflow-hidden rounded-xl p-3 flex-1 basis-[130px]"
             style={{
               background: "var(--surface-1)",
               border: "1px solid var(--hairline)",
