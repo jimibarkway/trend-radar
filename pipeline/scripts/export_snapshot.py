@@ -114,6 +114,7 @@ def build_snapshot(con: sqlite3.Connection) -> dict:
     opp_pool = [fetch_event_row(r) for r in con.execute(
         "SELECT * FROM raw_events "
         "WHERE composite_score IS NOT NULL "
+        "AND (status IS NULL OR status != 'unavailable') "
         "ORDER BY composite_score DESC LIMIT 200"
     )]
     top_opportunities = dedupe_events(opp_pool)[:50]
@@ -147,6 +148,7 @@ def build_snapshot(con: sqlite3.Connection) -> dict:
         "FROM raw_events e "
         "JOIN opportunity_angles a ON a.event_id = e.id "
         "WHERE e.composite_score IS NOT NULL "
+        "AND (e.status IS NULL OR e.status != 'unavailable') "
         "ORDER BY e.composite_score DESC LIMIT 5"
     ):
         d = fetch_event_row(r)

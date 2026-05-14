@@ -106,6 +106,7 @@ SELECT
   END AS gem_reason
 FROM raw_events e
 WHERE e.composite_score IS NOT NULL
+  AND (e.status IS NULL OR e.status != 'unavailable')
   AND e.composite_score >= 40
   AND (
     (e.source = 'github_trending' AND

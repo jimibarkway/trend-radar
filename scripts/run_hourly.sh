@@ -39,6 +39,14 @@ else
   say "  ✗ score failed (exit $?)"
 fi
 
+# Validate YouTube links - mark videos that have gone private/deleted so a
+# dead link never sits on the dashboard
+if python3 -m pipeline.scripts.validate_links >> "$LOG" 2>&1; then
+  say "  ✓ validate_links"
+else
+  say "  ✗ validate_links failed (exit $?)"
+fi
+
 # Re-cluster the last 96h window
 if python3 -m pipeline.scripts.cluster --window-hours 96 >> "$LOG" 2>&1; then
   say "  ✓ cluster"
