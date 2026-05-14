@@ -108,8 +108,14 @@ def velocity_score(event: dict) -> tuple[float, str, float]:
         v = min(10, outlier * 1.5 + math.log1p(vph) * 0.8)
         return (v, "outlier_ratio_x_views_per_hour", float(vph))
     if source == "youtube_search":
+        # views/hour, but the old log1p(vph)*1.5 curve saturated far too
+        # fast: a 179 views/hr video scored 7.8/10, making a 358-view video
+        # look like a viral signal. A log10 curve needs real traction:
+        #   ~50/hr -> 2.6 | ~200/hr -> 4.3 | ~1k/hr -> 6.0 | ~10k/hr -> 8.6
+        # Genuinely-accelerating videos still rank; modest ones don't claim
+        # the top hidden-gem slot.
         vph = engagement.get("views_per_hour", 0)
-        v = min(10, math.log1p(vph) * 1.5)
+        v = min(10, math.log10(1 + vph) * 2.0)
         return (v, "views_per_hour", float(vph))
     if source == "github_release":
         weight = {"high": 8, "med": 5, "low": 3}.get(engagement.get("priority", "med"), 5)
