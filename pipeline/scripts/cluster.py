@@ -1,20 +1,28 @@
 #!/usr/bin/env python3
-"""cluster.py - cross-source convergence scoring via embedding clustering.
+"""cluster.py - cross-source convergence via HDBSCAN over Gemini embeddings.
 
-Pulls the last N hours of scored events, embeds each title with Gemini
-text-embedding-004, and groups them by cosine similarity >= threshold. A
-cluster spanning multiple sources scores higher than a single-source signal,
-which is the core "convergence" insight: when GitHub, X, and Reddit all
-mention the same topic in a 48-hour window, that is meaningfully different
-from one off post.
+Density-based clustering (HDBSCAN) replaces the previous fixed-threshold
+cosine union-find. Per the NotebookLM research, a static cosine threshold
+(0.82) imposes a "global density" assumption that streaming text doesn't
+honour - HDBSCAN's mutual reachability distance + core distance adapt to
+local density, which means:
 
-Cluster score = max(member_composites) * ln(1 + member_count).
+  - Clusters of varying tightness can co-exist (a tight "Claude Code" cluster
+    next to a loose "AI agent" cluster, both extracted correctly)
+  - Outliers stay as outliers instead of being force-joined to the nearest
+    cluster the way union-find does
+  - No threshold to hand-tune
 
-Writes to the `clusters` table and updates raw_events.cluster_id.
+We L2-normalize each embedding so the default euclidean metric is
+equivalent to cosine similarity (dist = sqrt(2 - 2*cos_sim)). Then HDBSCAN
+runs in milliseconds even at thousands of points.
+
+Cluster scoring (unchanged):
+  cluster_score = max(member_composites) * ln(1 + member_count)
 
 Usage:
     python -m pipeline.scripts.cluster
-    python -m pipeline.scripts.cluster --window-hours 48 --threshold 0.82
+    python -m pipeline.scripts.cluster --window-hours 96 --min-cluster-size 2
 """
 
 import argparse
@@ -29,12 +37,15 @@ import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 
+import numpy as np
+import hdbscan
+
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 from pipeline.lib.env import db_path, require_env
 
 EMBED_MODEL = "gemini-embedding-2"
 EMBED_ENDPOINT = f"https://generativelanguage.googleapis.com/v1beta/models/{EMBED_MODEL}:embedContent"
-EMBED_SLEEP = 0.3  # ~200 RPM headroom
+EMBED_SLEEP = 0.3
 
 
 def embed_one(text: str, key: str, max_retries: int = 4) -> list[float] | None:
@@ -59,43 +70,28 @@ def embed_one(text: str, key: str, max_retries: int = 4) -> list[float] | None:
     return None
 
 
-def cosine(a: list[float], b: list[float]) -> float:
-    dot = sum(x * y for x, y in zip(a, b))
-    na = math.sqrt(sum(x * x for x in a))
-    nb = math.sqrt(sum(y * y for y in b))
-    if na == 0 or nb == 0:
-        return 0.0
-    return dot / (na * nb)
-
-
-def union_find_cluster(items: list[dict], embeddings: dict[str, list[float]],
-                       threshold: float) -> dict[str, str]:
-    """Greedy union-find. For each item, link it to an existing cluster
-    centroid if cosine >= threshold; otherwise it becomes a new cluster."""
-    cluster_of: dict[str, str] = {}
-    centroids: list[tuple[str, list[float]]] = []  # (cluster_id, centroid_vec)
-    for item in items:
-        eid = item["id"]
-        emb = embeddings.get(eid)
-        if not emb:
-            continue
-        assigned = None
-        for cid, centroid in centroids:
-            if cosine(emb, centroid) >= threshold:
-                assigned = cid
-                break
-        if assigned is None:
-            assigned = f"cluster_{uuid.uuid4().hex[:10]}"
-            centroids.append((assigned, emb))
-        cluster_of[eid] = assigned
-    return cluster_of
+def l2_normalize(vec: list[float]) -> np.ndarray:
+    arr = np.array(vec, dtype=np.float32)
+    n = np.linalg.norm(arr)
+    return arr / n if n > 0 else arr
 
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--window-hours", type=int, default=48)
-    ap.add_argument("--threshold", type=float, default=0.82)
-    ap.add_argument("--limit", type=int, help="Cap items processed (dev)")
+    ap.add_argument("--window-hours", type=int, default=96)
+    ap.add_argument(
+        "--min-cluster-size",
+        type=int,
+        default=2,
+        help="Minimum events to form a cluster (default 2)",
+    )
+    ap.add_argument(
+        "--min-samples",
+        type=int,
+        default=1,
+        help="HDBSCAN min_samples (lower = more clusters, more permissive)",
+    )
+    ap.add_argument("--limit", type=int)
     args = ap.parse_args()
 
     key = require_env("GOOGLE_API_KEY")
@@ -106,7 +102,8 @@ def main():
         "SELECT id, title, source, composite_score, published_at, ingested_at "
         "FROM raw_events "
         "WHERE composite_score IS NOT NULL "
-        "AND ingested_at > datetime('now', ?) "
+        "AND (status IS NULL OR status != 'unavailable') "
+        "AND datetime(ingested_at) > datetime('now', ?) "
         "ORDER BY composite_score DESC",
         (f"-{args.window_hours} hours",),
     ).fetchall()
@@ -115,32 +112,48 @@ def main():
         items = items[: args.limit]
 
     print(f"Clustering {len(items)} scored events (window={args.window_hours}h, "
-          f"cosine>={args.threshold})", file=sys.stderr)
+          f"min_cluster_size={args.min_cluster_size}, HDBSCAN)", file=sys.stderr)
 
-    # Embed each title (paced to stay under free-tier RPM).
-    embeddings: dict[str, list[float]] = {}
+    # Embed each title
+    embeddings: dict[str, np.ndarray] = {}
     for i, item in enumerate(items, 1):
         emb = embed_one(item["title"], key)
         if emb:
-            embeddings[item["id"]] = emb
+            embeddings[item["id"]] = l2_normalize(emb)
         if i % 20 == 0:
             print(f"  embedded {i}/{len(items)}", file=sys.stderr)
         time.sleep(EMBED_SLEEP)
 
-    cluster_of = union_find_cluster(items, embeddings, args.threshold)
+    # Build the matrix in the order of items that have embeddings
+    have_emb = [it for it in items if it["id"] in embeddings]
+    if not have_emb:
+        print("No embeddings - aborting cluster.", file=sys.stderr)
+        return
+    X = np.stack([embeddings[it["id"]] for it in have_emb])
 
-    # Aggregate cluster stats
-    by_cluster: dict[str, list[dict]] = {}
-    for item in items:
-        cid = cluster_of.get(item["id"])
-        if not cid:
+    clusterer = hdbscan.HDBSCAN(
+        min_cluster_size=args.min_cluster_size,
+        min_samples=args.min_samples,
+        metric="euclidean",  # equivalent to cosine on L2-normalized vectors
+        cluster_selection_method="eom",
+        allow_single_cluster=False,
+    )
+    labels = clusterer.fit_predict(X)
+    # label -1 = noise; non-negative ints = cluster ids
+    print(f"HDBSCAN: {(labels >= 0).sum()} clustered, {(labels == -1).sum()} noise",
+          file=sys.stderr)
+
+    # Group events by cluster label
+    by_cluster: dict[int, list[dict]] = {}
+    for it, lab in zip(have_emb, labels):
+        if lab == -1:
             continue
-        by_cluster.setdefault(cid, []).append(item)
+        by_cluster.setdefault(int(lab), []).append(it)
 
     # Wipe and rewrite the clusters table for this window
     con.execute("DELETE FROM clusters")
     multi_source_count = 0
-    for cid, members in by_cluster.items():
+    for lab, members in by_cluster.items():
         composite_max = max(m["composite_score"] for m in members)
         sources = sorted({m["source"] for m in members})
         score = round(composite_max * math.log1p(len(members)), 2)
@@ -149,6 +162,7 @@ def main():
         centroid_title = max(members, key=lambda m: m["composite_score"])["title"]
         if len(sources) >= 2:
             multi_source_count += 1
+        cid = f"hdb_{uuid.uuid4().hex[:10]}"
         con.execute(
             "INSERT INTO clusters "
             "(id, centroid_title, member_count, source_count, sources, "
@@ -166,8 +180,8 @@ def main():
     con.commit()
     con.close()
 
-    print(f"Done. {len(by_cluster)} clusters total, "
-          f"{multi_source_count} spanning 2+ sources.", file=sys.stderr)
+    print(f"Done. {len(by_cluster)} clusters, {multi_source_count} spanning 2+ sources.",
+          file=sys.stderr)
 
 
 if __name__ == "__main__":
