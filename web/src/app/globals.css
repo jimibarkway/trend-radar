@@ -31,6 +31,9 @@
   --src-x: #3b9eff;
   --src-rss: #ffc533;
   --src-search: #a855f7;
+  --src-hackernews: #ff6600;
+  --src-polymarket: #2d9cdb;
+  --src-bluesky: #1185fe;
 }
 
 @theme inline {
@@ -56,6 +59,9 @@
   --color-src-x: var(--src-x);
   --color-src-rss: var(--src-rss);
   --color-src-search: var(--src-search);
+  --color-src-hackernews: var(--src-hackernews);
+  --color-src-polymarket: var(--src-polymarket);
+  --color-src-bluesky: var(--src-bluesky);
   --font-sans: var(--font-inter), system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), "JetBrains Mono", monospace;
 }

@@ -168,6 +168,23 @@ def velocity_raw(event: dict) -> tuple[float, str]:
         if ups is None and nc is None:
             return (0.0, "no_engagement_data")
         return (float((ups or 0) + (nc or 0) * 2), "ups_plus_2x_comments")
+    if source == "hackernews":
+        # Points are HN's upvote signal; comments imply discussion depth.
+        # Same ratio as reddit so cross-source percentile is comparable.
+        points = engagement.get("points") or 0
+        nc = engagement.get("num_comments") or 0
+        return (float(points + nc * 2), "points_plus_2x_comments")
+    if source == "polymarket":
+        # Real money on the line in the last 24h. The strongest single signal
+        # we ingest - traders actually have skin in the game. Capped softly
+        # by the percentile ranker downstream so a $100k market doesn't
+        # nuke the rest of the source's scoring.
+        return (float(engagement.get("volume_24hr") or 0), "volume_24hr_usd")
+    if source == "bluesky":
+        likes = engagement.get("likes") or 0
+        reposts = engagement.get("reposts") or 0
+        replies = engagement.get("replies") or 0
+        return (float(likes + reposts * 2 + replies * 3), "likes_plus_2x_reposts_plus_3x_replies")
     return (0.0, "default")
 
 

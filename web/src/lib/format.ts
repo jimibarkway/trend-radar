@@ -25,6 +25,9 @@ export const SOURCE_COLORS: Record<string, string> = {
   reddit: "var(--src-reddit)",
   rss: "var(--src-rss)",
   x: "var(--src-x)",
+  hackernews: "var(--src-hackernews)",
+  polymarket: "var(--src-polymarket)",
+  bluesky: "var(--src-bluesky)",
 };
 
 export const SOURCE_LABELS: Record<string, string> = {
@@ -35,6 +38,9 @@ export const SOURCE_LABELS: Record<string, string> = {
   reddit: "Reddit",
   rss: "RSS",
   x: "X",
+  hackernews: "Hacker News",
+  polymarket: "Polymarket",
+  bluesky: "Bluesky",
 };
 
 export function sourceLabel(s: Source | string): string {

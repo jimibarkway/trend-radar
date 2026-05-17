@@ -15,6 +15,9 @@ const SOURCE_PILLS = [
   "reddit",
   "rss",
   "x",
+  "hackernews",
+  "polymarket",
+  "bluesky",
 ];
 
 export function FeedCard({ snapshot }: { snapshot: Snapshot | null }) {
@@ -90,23 +93,20 @@ export function FeedCard({ snapshot }: { snapshot: Snapshot | null }) {
                   : score >= 50
                     ? "var(--rising)"
                     : "var(--ink-subtle)";
+              const related = o.related_signals ?? [];
               return (
-                <a
+                <FeedRow
                   key={o.id}
-                  href={o.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex flex-col sm:flex-row gap-3 rounded-lg p-2.5 transition-colors hover:bg-[var(--surface-3)]"
-                  style={{
-                    background: "var(--surface-2)",
-                    border: "1px solid var(--hairline)",
-                    borderLeft: `2px solid ${col}`,
-                  }}
+                  o={o}
+                  col={col}
+                  score={score}
+                  scoreColour={scoreColour}
+                  related={related}
                 >
                   <SourcePreview event={o} size="sm" />
                   <div className="flex min-w-0 flex-1 flex-col justify-between">
                     <div>
-                      <div className="mb-1 flex items-center gap-2">
+                      <div className="mb-1 flex items-center gap-2 flex-wrap">
                         <span style={{ color: col }}>
                           <SourceIcon source={o.source} size={11} />
                         </span>
@@ -116,6 +116,31 @@ export function FeedCard({ snapshot }: { snapshot: Snapshot | null }) {
                         >
                           {sourceLabel(o.source)} · {relativeTime(o.published_at)}
                         </span>
+                        {(() => {
+                          const eng = (o.engagement ?? {}) as Record<string, unknown>;
+                          const ratio = Number(eng.outlier_ratio ?? 0);
+                          if (!ratio || ratio < 1.5) return null;
+                          const subs = Number(eng.channel_subscriber_count ?? 0);
+                          const colour = ratio >= 5 ? "#FFB020"        // gold viral
+                                       : ratio >= 2 ? "var(--accent)"  // electric blue
+                                       : "var(--rising)";              // green nudge
+                          const label = ratio >= 5 ? "🔥" : "↑";
+                          return (
+                            <span
+                              className="t-mono inline-flex items-center gap-1 rounded-full px-1.5 py-0.5"
+                              style={{
+                                background: `${colour}22`,
+                                color: colour,
+                                border: `1px solid ${colour}55`,
+                                fontSize: "10px",
+                                fontWeight: 600,
+                              }}
+                              title={subs ? `Channel: ${subs.toLocaleString()} subs · this video is ${ratio.toFixed(1)}× the channel's own median` : `${ratio.toFixed(1)}× the channel's own median views`}
+                            >
+                              {label} {ratio.toFixed(1)}× channel avg
+                            </span>
+                          );
+                        })()}
                       </div>
                       <h3
                         className="line-clamp-2"
@@ -150,12 +175,127 @@ export function FeedCard({ snapshot }: { snapshot: Snapshot | null }) {
                       </span>
                     </div>
                   </div>
-                </a>
+                </FeedRow>
               );
             })}
           </div>
         </div>
       )}
     </Card>
+  );
+}
+
+
+// ---------------------------------------------------------------------------
+// FeedRow: one row in the feed. The whole row is clickable to open the
+// source URL, except for the Deep Dive button which expands an inline
+// multi-source brief built from related_signals (computed server-side in
+// export_snapshot.py - no extra API calls at click time).
+// ---------------------------------------------------------------------------
+function FeedRow({
+  o,
+  col,
+  related,
+  children,
+}: {
+  o: import("@/lib/snapshot").RawEvent;
+  col: string;
+  score: number;
+  scoreColour: string;
+  related: import("@/lib/snapshot").RelatedSignal[];
+  children: React.ReactNode;
+}) {
+  const [open, setOpen] = useState(false);
+  const hasRelated = related.length > 0;
+  return (
+    <div
+      className="rounded-lg transition-colors"
+      style={{
+        background: "var(--surface-2)",
+        border: "1px solid var(--hairline)",
+        borderLeft: `2px solid ${col}`,
+      }}
+    >
+      <a
+        href={o.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex flex-col sm:flex-row gap-3 p-2.5 hover:bg-[var(--surface-3)] rounded-t-lg"
+      >
+        {children}
+      </a>
+      {/* Deep Dive bar */}
+      <div
+        className="flex items-center justify-between px-2.5 py-1.5"
+        style={{ borderTop: "1px solid var(--hairline)" }}
+      >
+        <span className="t-supporting" style={{ color: "var(--ink-tertiary)", fontSize: "10.5px" }}>
+          {hasRelated
+            ? `${related.length} related signal${related.length === 1 ? "" : "s"} across ${new Set(related.map((r) => r.source)).size} source${new Set(related.map((r) => r.source)).size === 1 ? "" : "s"}`
+            : "No cross-source convergence (yet)"}
+        </span>
+        <button
+          type="button"
+          disabled={!hasRelated}
+          onClick={() => setOpen((v) => !v)}
+          className="t-micro-label inline-flex items-center gap-1 rounded-full px-2.5 py-1 transition-all"
+          style={{
+            background: hasRelated ? "var(--accent-soft)" : "transparent",
+            color: hasRelated ? "var(--accent)" : "var(--ink-subtle)",
+            border: `1px solid ${hasRelated ? "var(--accent)" : "var(--hairline)"}55`,
+            cursor: hasRelated ? "pointer" : "not-allowed",
+            fontSize: "10px",
+            fontWeight: 600,
+          }}
+        >
+          🔬 {open ? "Close" : "Deep Dive"}
+        </button>
+      </div>
+      {open && hasRelated && (
+        <div
+          className="px-2.5 pb-2.5 space-y-1.5"
+          style={{ borderTop: "1px solid var(--hairline)" }}
+        >
+          <p
+            className="t-supporting pt-2"
+            style={{ color: "var(--ink-tertiary)", fontSize: "10.5px" }}
+          >
+            Other places this story is showing up - drawn from your own
+            ingested events, ranked by topic overlap.
+          </p>
+          {related.map((r, i) => {
+            const rcol = sourceColor(r.source);
+            return (
+              <a
+                key={i}
+                href={r.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-start gap-2 rounded p-1.5 hover:bg-[var(--surface-3)]"
+                style={{ borderLeft: `2px solid ${rcol}`, background: "var(--surface-1)" }}
+              >
+                <span style={{ color: rcol, marginTop: "2px" }}>
+                  <SourceIcon source={r.source} size={10} />
+                </span>
+                <div className="flex-1 min-w-0">
+                  <div
+                    className="t-supporting"
+                    style={{ color: "var(--ink-tertiary)", fontSize: "10px" }}
+                  >
+                    {sourceLabel(r.source)} · {relativeTime(r.published_at)}
+                  </div>
+                  <div
+                    className="line-clamp-2"
+                    style={{ color: "var(--ink)", fontSize: "12px", lineHeight: 1.3 }}
+                  >
+                    {r.title}
+                  </div>
+                </div>
+              </a>
+            );
+          })}
+        </div>
+      )}
+    </div>
   );
 }

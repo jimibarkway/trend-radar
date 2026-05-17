@@ -34,10 +34,13 @@ ingest:
 	-python -m pipeline.scripts.ingest.rss_feeds
 	-python -m pipeline.scripts.ingest.github_releases
 	-python -m pipeline.scripts.ingest.github_trending
-	-python -m pipeline.scripts.ingest.reddit_tavily
+	-python -m pipeline.scripts.ingest.reddit_native
 	-python -m pipeline.scripts.ingest.youtube_uploads
 	-python -m pipeline.scripts.ingest.youtube_searches
 	-python -m pipeline.scripts.ingest.x_apify
+	-python -m pipeline.scripts.ingest.hackernews
+	-python -m pipeline.scripts.ingest.polymarket
+	-python -m pipeline.scripts.ingest.bluesky
 
 score:
 	python -m pipeline.scripts.score

@@ -24,7 +24,7 @@ say() { echo "[$(ts)] $*" >> "$LOG"; }
 say "=== hourly run start ==="
 
 # Cheap ingest sources (no paid API calls)
-for mod in rss_feeds github_releases github_trending youtube_uploads youtube_searches reddit_tavily; do
+for mod in rss_feeds github_releases github_trending youtube_uploads youtube_searches reddit_native hackernews polymarket bluesky; do
   if python3 -m "pipeline.scripts.ingest.$mod" >> "$LOG" 2>&1; then
     say "  ✓ $mod"
   else

@@ -32,6 +32,17 @@ export type RawEvent = {
   composite_score?: number;
   cluster_id?: string | null;
   engagement?: Record<string, unknown> | null;
+  related_signals?: RelatedSignal[];
+};
+
+export type RelatedSignal = {
+  source: string;
+  title: string;
+  url: string;
+  published_at?: string | null;
+  composite_score?: number | null;
+  overlap_score?: number;
+  engagement?: Record<string, unknown> | null;
 };
 
 export type Cluster = {
@@ -82,6 +93,7 @@ export type Snapshot = {
     last_ingest_at: string | null;
     last_score_at: string | null;
     sources_tracked: string[];
+    diversity_index?: number;
   };
   top_opportunities: RawEvent[];
   top_clusters: Cluster[];

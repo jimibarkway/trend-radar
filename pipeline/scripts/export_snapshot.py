@@ -65,6 +65,53 @@ def canonical_key(event: dict) -> str:
     return url.rstrip("/").lower()
 
 
+def diversify(events: list[dict], total: int = 50, cap_pct: float = 0.30) -> list[dict]:
+    """Cap any single source at cap_pct of the final list, so a hot day on
+    one platform can't swallow the whole feed. Input must already be sorted
+    by composite_score DESC. With total=50 + cap_pct=0.30, no source occupies
+    more than 15 slots, and once any source caps out the next-best event from
+    a different source takes its place."""
+    if total <= 0:
+        return []
+    max_per_source = max(1, int(total * cap_pct))
+    picked: list[dict] = []
+    by_source: dict[str, int] = {}
+    overflow: list[dict] = []   # would-be picks that hit a source cap
+    for ev in events:
+        src = ev.get("source", "unknown")
+        if by_source.get(src, 0) >= max_per_source:
+            overflow.append(ev)
+            continue
+        picked.append(ev)
+        by_source[src] = by_source.get(src, 0) + 1
+        if len(picked) >= total:
+            break
+    # If we ran out of diverse events before filling `total`, top up from the
+    # overflow so the dashboard always has the requested feed length.
+    if len(picked) < total:
+        for ev in overflow:
+            picked.append(ev)
+            if len(picked) >= total:
+                break
+    return picked
+
+
+def source_diversity(events: list[dict]) -> float:
+    """Simpson's index across the visible events: 1 - Σ(p_i²). A perfectly
+    even mix scores near 1; a single-source feed scores near 0. Surfaced in
+    the dashboard header as a credibility signal."""
+    if not events:
+        return 0.0
+    counts: dict[str, int] = {}
+    for ev in events:
+        s = ev.get("source", "unknown")
+        counts[s] = counts.get(s, 0) + 1
+    n = sum(counts.values())
+    if n == 0:
+        return 0.0
+    return round(1.0 - sum((c / n) ** 2 for c in counts.values()), 3)
+
+
 def dedupe_events(events: list[dict]) -> list[dict]:
     """Keep one event per canonical key - the highest composite, then the
     most recently ingested. Input is assumed sorted by composite desc."""
@@ -89,6 +136,94 @@ def dedupe_events(events: list[dict]) -> list[dict]:
         key=lambda e: e.get("composite_score") or 0,
         reverse=True,
     )
+
+
+STOPWORDS = {
+    "the", "a", "an", "and", "or", "but", "of", "to", "in", "for", "on", "at",
+    "by", "with", "from", "is", "are", "was", "were", "be", "been", "being",
+    "this", "that", "these", "those", "it", "its", "as", "if", "you", "your",
+    "we", "our", "they", "their", "i", "my", "me", "new", "now", "how",
+    "what", "why", "when", "ai", "llm", "vs",
+}
+
+
+def _topic_tokens(text: str) -> set[str]:
+    """Lowercase content words, length >=4, with stopwords removed."""
+    return {
+        re.sub(r"[^a-z0-9]", "", w)
+        for w in (text or "").lower().split()
+        if len(w) >= 4
+    } - STOPWORDS - {""}
+
+
+def find_related_signals(con: sqlite3.Connection, opp: dict, limit: int = 6) -> list[dict]:
+    """For a top opportunity, find up to `limit` related events from OTHER
+    sources sharing topic tokens with the opp's title - or sharing the same
+    cluster_id. This is what powers the dashboard's 'Deep Dive' button:
+    a one-click cross-source brief drawn from our own ingested events,
+    no extra LLM calls, no external API at click time.
+
+    Returns: list of {source, title, url, published_at, composite_score,
+    overlap_score} sorted by overlap then composite.
+    """
+    opp_tokens = _topic_tokens(opp.get("title", ""))
+    if len(opp_tokens) < 2 and not opp.get("cluster_id"):
+        return []
+
+    # Pull a wide candidate pool: same cluster OR recently scored events
+    # other than self, then rank by token overlap in Python (SQLite has no
+    # vector ops and the dataset is small enough that this is sub-second).
+    candidates_sql = (
+        "SELECT id, source, title, url, published_at, composite_score, "
+        "       engagement_raw, cluster_id "
+        "FROM raw_events "
+        "WHERE id != :id "
+        "  AND composite_score IS NOT NULL "
+        "  AND (status IS NULL OR status != 'unavailable') "
+        "  AND (cluster_id = :cluster OR ingested_at > datetime('now', '-96 hours')) "
+        "ORDER BY composite_score DESC LIMIT 300"
+    )
+    rows = con.execute(candidates_sql, {
+        "id": opp.get("id", ""),
+        "cluster": opp.get("cluster_id") or "__none__",
+    }).fetchall()
+
+    scored: list[tuple[float, dict]] = []
+    for r in rows:
+        row_tokens = _topic_tokens(r["title"])
+        overlap = len(opp_tokens & row_tokens)
+        cluster_bonus = 2 if (opp.get("cluster_id") and r["cluster_id"] == opp["cluster_id"]) else 0
+        if overlap < 2 and cluster_bonus == 0:
+            continue
+        scored.append((overlap + cluster_bonus, dict(r)))
+
+    scored.sort(key=lambda x: (-x[0], -(x[1].get("composite_score") or 0)))
+    out: list[dict] = []
+    seen_sources: dict[str, int] = {}
+    for overlap_score, row in scored:
+        src = row["source"]
+        # Prefer cross-source diversity inside the related list too
+        if seen_sources.get(src, 0) >= 3:
+            continue
+        eng = None
+        if row.get("engagement_raw"):
+            try:
+                eng = json.loads(row["engagement_raw"])
+            except Exception:
+                eng = None
+        out.append({
+            "source": src,
+            "title": row["title"],
+            "url": row["url"],
+            "published_at": row["published_at"],
+            "composite_score": row.get("composite_score"),
+            "overlap_score": overlap_score,
+            "engagement": eng,
+        })
+        seen_sources[src] = seen_sources.get(src, 0) + 1
+        if len(out) >= limit:
+            break
+    return out
 
 
 def build_snapshot(con: sqlite3.Connection) -> dict:
@@ -117,7 +252,16 @@ def build_snapshot(con: sqlite3.Connection) -> dict:
         "AND (status IS NULL OR status != 'unavailable') "
         "ORDER BY composite_score DESC LIMIT 200"
     )]
-    top_opportunities = dedupe_events(opp_pool)[:50]
+    top_opportunities = diversify(dedupe_events(opp_pool), total=50, cap_pct=0.30)
+    diversity_index = source_diversity(top_opportunities)
+
+    # Attach per-opportunity related signals - powers the dashboard's
+    # one-click "Deep Dive" multi-source brief without needing a backend
+    # endpoint at click time. Capped at 6 related signals per opp; only
+    # signals from other sources count, so the brief always reads as
+    # cross-source convergence rather than echo chamber.
+    for opp in top_opportunities:
+        opp["related_signals"] = find_related_signals(con, opp, limit=6)
 
     top_clusters_rows = con.execute(
         "SELECT * FROM clusters WHERE source_count >= 2 "
@@ -181,6 +325,7 @@ def build_snapshot(con: sqlite3.Connection) -> dict:
             "last_ingest_at": meta_row["last_ingest"],
             "last_score_at": meta_row["last_score"],
             "sources_tracked": sorted(counts_by_source.keys()),
+            "diversity_index": diversity_index,
         },
         "top_opportunities": top_opportunities,
         "top_clusters": top_clusters,
