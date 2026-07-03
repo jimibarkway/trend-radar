@@ -95,6 +95,15 @@ make dev               # http://localhost:3000
 
 The dashboard reads `web/public/snapshot.json` locally and the Vercel Blob URL in production (set `NEXT_PUBLIC_SNAPSHOT_URL` and `BLOB_READ_WRITE_TOKEN`).
 
+### Optional TweetClaw source review
+
+If you already use Xquik or OpenClaw, [TweetClaw](https://github.com/Xquik-dev/tweetclaw)
+can review X/Twitter search exports, account lists, or monitor results before
+they become `x_keywords.json` watches. Keep Trend Radar responsible for
+ingestion, scoring, convergence clustering, hidden-gem filters, and angle
+generation; use TweetClaw only to make the X/Twitter source packet easier to
+inspect before a scheduled pipeline run.
+
 ---
 
 ## Fork it for your niche
