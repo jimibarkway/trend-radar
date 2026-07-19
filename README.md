@@ -1,8 +1,8 @@
 # Trend Radar
 
-> Finds AI topics before they hit mainstream. Six sources. Velocity-scored, not popularity.
+> Finds AI topics before they hit mainstream. Ten sources. Velocity-scored, not popularity.
 
-Most trend trackers show what's already big. By the time a topic is trending on a feed, the window to be early has closed. Trend Radar inverts that: it scores **velocity and cross-source convergence** across six signal sources, so the things that are *about to be* big surface first.
+Most trend trackers show what's already big. By the time a topic is trending on a feed, the window to be early has closed. Trend Radar inverts that: it scores **velocity and cross-source convergence** across ten signal sources, so the things that are *about to be* big surface first.
 
 Built as a competition entry for [Jack Roberts' Trend Finder competition](https://github.com/Itssssss-Jack), May 2026.
 
@@ -22,15 +22,18 @@ That's **90 minutes after launch** - hours before it would have shown up on Twit
 
 ## What it actually does
 
-Six ingestion sources hit a SQLite event store hourly:
+Ten ingestion sources hit a SQLite event store hourly:
 
 1. **GitHub releases** - canonical AI repos (Anthropic, OpenAI, n8n, LangChain, MCP, Ollama, Hermes, CrewAI, AutoGen). Polled every 5 min for new releases.
 2. **GitHub trending** - daily scrape, filtered to AI keywords.
 3. **YouTube uploads** - 43 AI-niche channels. Each video gets views-per-hour velocity *and* an outlier ratio against that channel's median, so a small channel posting a 10x outlier wins over a big channel posting an average video.
 4. **YouTube search** - discovery queries to catch breakout creators who are not yet on the channel list.
-5. **Reddit via Tavily** - 8 subs, ~240 searches/month on the free tier.
+5. **Reddit** - recent posts from configured subreddits via the Arctic Shift API, with PullPush fallback.
 6. **RSS** - 18 feeds: Anthropic, OpenAI, DeepMind, HN, Latent Space, Simon Willison, Y Combinator, Hugging Face, more.
 7. **X / Twitter via Apify** - keyword + `from:@account` watches, polled every 12h to stay cheap.
+8. **Hacker News** - recent AI stories from the public Algolia search API.
+9. **Polymarket** - active AI prediction markets filtered by 24-hour volume.
+10. **Bluesky** - authenticated post search across configured AI queries.
 
 Every signal is scored by Gemini Flash-Lite on three axes:
 
@@ -91,9 +94,21 @@ make pipeline          # init -> ingest -> score -> cluster -> angles -> snapsho
 make dev               # http://localhost:3000
 ```
 
-`make pipeline` works with **only** `GOOGLE_API_KEY`. Sources whose key you haven't set (YouTube, Reddit, X) skip themselves cleanly and the run continues - you'll still get GitHub releases, GitHub trending, and RSS scored and clustered. Add the other keys when you want those sources too (see the table below).
+`make pipeline` works with **only** `GOOGLE_API_KEY`. Sources whose key you haven't set (YouTube, X, Bluesky) skip themselves cleanly and the run continues - you'll still get GitHub, Reddit, RSS, Hacker News, and Polymarket signals scored and clustered. Add the other keys when you want those sources too (see the table below).
 
 The dashboard reads `web/public/snapshot.json` locally and the Vercel Blob URL in production (set `NEXT_PUBLIC_SNAPSHOT_URL` and `BLOB_READ_WRITE_TOKEN`).
+
+### Optional TweetClaw source review
+
+If you already use Xquik or OpenClaw, [TweetClaw](https://github.com/Xquik-dev/tweetclaw)
+can review X/Twitter search exports, account lists, or monitor results before
+they become `x_keywords.json` watches. Keep Trend Radar responsible for
+ingestion, scoring, convergence clustering, hidden-gem filters, and angle
+generation; use TweetClaw only to make the X/Twitter source packet easier to
+inspect before a scheduled pipeline run.
+
+Xquik is an independent third-party service. Not affiliated with X Corp.
+"Twitter" and "X" are trademarks of X Corp.
 
 ---
 
@@ -107,8 +122,9 @@ This repo is wired for AI / agentic-workflow content. To point it at your niche:
 |---|---|---|---|
 | `GOOGLE_API_KEY` | **Required** | [aistudio.google.com/apikey](https://aistudio.google.com/apikey) | Gemini Flash-Lite scoring, embeddings, angle generation. Free tier is enough. |
 | `YOUTUBE_API_KEY` | Recommended | [console.cloud.google.com](https://console.cloud.google.com) → enable "YouTube Data API v3" | YouTube channel + search ingestion |
-| `TAVILY_API_KEY` | Optional | [tavily.com](https://tavily.com) | Reddit ingestion. 1000 searches/mo free. |
 | `APIFY_TOKEN` | Optional | [console.apify.com](https://console.apify.com) | X / Twitter ingestion. Paid, ~£0.20/mo at 12h cadence. |
+| `BLUESKY_HANDLE` | Optional | [bsky.app](https://bsky.app) | Account handle for Bluesky ingestion. |
+| `BLUESKY_APP_PASSWORD` | Optional | [Bluesky app passwords](https://bsky.app/settings/app-passwords) | App password for authenticated Bluesky search. |
 | `BLOB_READ_WRITE_TOKEN` | Production only | Vercel project → Storage → Blob → Create | Hosts the live snapshot.json. Free hobby tier. |
 
 Copy `.env.example` to `.env` and paste them in. `.env` is gitignored.
@@ -179,10 +195,10 @@ trend-radar/
 ├── pipeline/                Python ingestion + scoring + snapshot export
 │   ├── sql/schema.sql
 │   ├── lib/env.py
-│   ├── config/              7 source configs + niche.json + x_keywords.example.json
+│   ├── config/              Source configs, niche.json, and x_keywords.example.json
 │   └── scripts/
 │       ├── init_db.py
-│       ├── ingest/          (7 sources)
+│       ├── ingest/          (10 sources)
 │       ├── score.py         Gemini Flash-Lite niche + velocity + composite
 │       ├── cluster.py       text-embedding-004 cosine convergence
 │       ├── generate_angles.py   Gemini 2.5 Pro voice-rules angle drafts
