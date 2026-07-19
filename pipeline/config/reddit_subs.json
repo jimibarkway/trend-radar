@@ -1,5 +1,5 @@
 {
-  "_comment": "Reddit subreddits scraped daily via Tavily. Allowlist also enforced by URL-subreddit check in reddit_tavily.py - posts from off-allowlist subs are dropped at ingest.",
+  "_comment": "Reddit subreddits fetched from Arctic Shift with PullPush fallback. The allowlist is enforced against each returned post before ingest.",
   "subreddits": [
     {"name": "LocalLLaMA", "priority": "high"},
     {"name": "AI_Agents", "priority": "high"},
